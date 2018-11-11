@@ -1,0 +1,52 @@
+C ----- Common Declaration for the Spectral IO
+
+      REAL alfaw(202), acoftw(202), acoftsw(202), betaw(202),
+     1 sfalfa(2), sfacoft(2), sfacofts(2), sfbeta(2),VALNTC(12),
+     1 sfw(202), etfw(202), alamw(202), rhow(202), sfbetag(61,2),
+     2 alftw(61,202),betagw(61,202), sfalfbar(2), sfalft(61,2)
+
+      COMMON /SPECTRAL/ alfaw, acoftw, acoftsw, betaw,
+     1 sfalfa, sfacoft, sfacofts, sfbeta,VALNTC,
+     1 sfw, etfw, alamw, rhow, sfbetag,
+     2 alftw,betagw, sfalfbar, sfalft
+
+C ----- Common Declaration for the FG IO
+
+      REAL TOTOZTP(21),TABFG(61,21),PRES(61)
+      COMMON /FG_IO/TOTOZTP,TABFG,PRES
+
+C ----- Common Declation for Multiple scattering terms
+
+      REAL CQMS(12,42), SLANT(12,1891), TABJMS(61,13,21)
+      COMMON /BBBB/ SLANT,CQMS, TABJMS
+
+      REAL TNRL(12,45,19),HM(45)
+      COMMON /NRL_IO/ TNRL, HM
+
+      REAL TOTREF(5),REFCOR(12,5)
+      COMMON /REFRIO/ TOTREF,REFCOR
+
+C -------- Filenames used by the UMKEHR_INTERFACE
+
+      CHARACTER*300 INPUT_BASEFOLDER
+      CHARACTER*300 FILENAME_UNIT04
+      CHARACTER*300 FILENAME_UNIT05
+      CHARACTER*300 FILENAME_UNIT08
+      CHARACTER*300 FILENAME_UNIT09
+      CHARACTER*300 FILENAME_UNIT10
+      CHARACTER*300 FILENAME_UNIT11
+      CHARACTER*300 FILENAME_UNIT13
+      CHARACTER*300 FILENAME_UNIT15
+      CHARACTER*300 FILENAME_UNIT18
+      CHARACTER*300 FILENAME_UNIT19
+      CHARACTER*300 FILENAME_UNIT79
+      CHARACTER*300 FILENAME_UNIT97
+      CHARACTER*300 FILENAME_UNIT98
+
+
+      COMMON /UMKEHR_IONAMES/ FILENAME_UNIT04, FILENAME_UNIT05,
+     1       FILENAME_UNIT08, FILENAME_UNIT09, FILENAME_UNIT10,
+     2       FILENAME_UNIT11, FILENAME_UNIT13, FILENAME_UNIT15,
+     3       FILENAME_UNIT18, FILENAME_UNIT19, FILENAME_UNIT79,
+     4       FILENAME_UNIT97, FILENAME_UNIT98, INPUT_BASEFOLDER
+
