@@ -249,7 +249,10 @@ C *****END OF INITIALIZATION SEGMENT ********************************
 C ***** BEGIN PROCESSING DATA FOR FIRST UMKEHR STATION **************
 C ***** INITIALIZATION FOR STATION BATCH OF UMKEHR DATA *************
 C *******************************************************************
-  190 READ (10,5010) ISN,STATN,ALAT,PNOT,HGT                            TEMP****
+  190 READ (10,5010,IOSTAT=IOS) ISN,STATN,ALAT,PNOT,HGT                            TEMP****
+      IF (IOS .NE. 0) THEN
+         STOP
+      END IF
       write (6,5010) ISN,STATN,ALAT,PNOT,HGT                            TEMP****
       PNOT=PNOT/1013.25                                                 TEMP****
       nc=15*jc
@@ -1769,7 +1772,7 @@ C ******************************************************************
         do 11 j=1,n
           if (abs(a(i,j)).gt.aamax) aamax=abs(a(i,j))
 11      continue
-        if (aamax.eq.0.) pause 'singular matrix in ludcmp'
+        if (aamax.eq.0.) print *, 'singular matrix in ludcmp'
         vv(i)=1./aamax
 12    continue
       do 19 j=1,n

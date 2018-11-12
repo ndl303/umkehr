@@ -43,7 +43,9 @@ C ******************************************************************
         do 11 j=1,n
           if (abs(a(i,j)).gt.aamax) aamax=abs(a(i,j))
 11      continue
-        if (aamax.eq.0.) pause 'singular matrix in ludcmp'
+        IF (aamax.eq.0.) THEN
+        CALL CONSOLEMSG('ludcmp: singular matrix in ludcmp')
+        END IF
         vv(i)=1./aamax
 12    continue
       do 19 j=1,n

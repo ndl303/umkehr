@@ -31,10 +31,13 @@ C----------------------------------------------------------------------
 
       SUBROUTINE UMKEHR_WRITE_STRING( JUNIT, STRLINE )
       IMPLICIT NONE
-      INTEGER        JUNIT
-      CHARACTER *(*) STRLINE
+      INTEGER         JUNIT
+      CHARACTER*(*) STRLINE
 
-      WRITE(*,*)JUNIT,' ',STRLINE
+      WRITE( JUNIT, 123)STRLINE
+      if (JUNIT .EQ. 6)  WRITE( 16, 123)STRLINE
+
+  123 FORMAT(1H ,A)
       RETURN
       END
 
