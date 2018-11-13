@@ -24,7 +24,7 @@
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.994005298" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699" name="GNU Fortran Compiler" superClass="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug">
-								<option id="gnu.fortran.compiler.option.misc.other.916661746" name="Other flags" superClass="gnu.fortran.compiler.option.misc.other" value="-c -fmessage-length=0 -std=legacy -ffixed-line-length-72 -Wunused-variable" valueType="string"/>
+								<option id="gnu.fortran.compiler.option.misc.other.916661746" name="Other flags" superClass="gnu.fortran.compiler.option.misc.other" value="-c -fmessage-length=0 -std=legacy -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic" valueType="string"/>
 								<option id="gnu.fortran.compiler.option.warnings.allwarn.253362414" name="All warnings (-Wall)" superClass="gnu.fortran.compiler.option.warnings.allwarn" value="false" valueType="boolean"/>
 								<inputType id="photran.managedbuild.tool.gnu.fortran.compiler.input.1733512906" superClass="photran.managedbuild.tool.gnu.fortran.compiler.input"/>
 							</tool>
@@ -40,11 +40,16 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.827280139" name="umkehr_common.fix" rcbsApplicability="disable" resourcePath="sources/umkehr_common.fix" toolsToInvoke="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.1778816209">
-						<tool id="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.1778816209" name="GNU Fortran Compiler" superClass="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699"/>
+					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.1945959553" name="umkehr_driver.f" rcbsApplicability="disable" resourcePath="sources/umkehr_driver.f" toolsToInvoke="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.191834525">
+						<tool id="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.191834525" name="GNU Fortran Compiler" superClass="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699"/>
+					</fileInfo>
+					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.141066745" name="umkehr_if.cpp" rcbsApplicability="disable" resourcePath="sources/umkehr_if.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.base.1806237758">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1806237758" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
+							<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.479982153" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="sources/umkehr_common.fix|docs|original" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="sources/umkehr_driver.f|sources/cimpl_emulator.f|sources/umkehr_common.fix|docs|original" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

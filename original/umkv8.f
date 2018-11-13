@@ -48,7 +48,7 @@ C Irina update 9/30/2002
       CHARACTER*18 STATN                                                TEMP****
       INTEGER IL(61), ISZA(4),KBN
       COMMON /BBBB/ SLANT(12,1891),CQMS(12,42)
-      REAL*4 DET                                                        00000140
+      REAL  DET                                                         00000140
 C *******************************************************************
 C ***** INITIALIZATION SEGMENT **************************************
 C *******************************************************************
@@ -1478,7 +1478,7 @@ C ******************************************************************
       SUBROUTINE SLANTS (NCP1,THENOT,SQCHP,CHPN,SQCHX,CHXN,HHH,DHH,CHPP)00005030
 C ***** CALCULATES SLANT PATHS FOR FORWARD MODEL CALCULATION ********
       DIMENSION HHH(61),DHH(61),CHPP(61,12),THENOT(12)
-      REAL*8 CNVRT,SN,RAYCON,THNT,DA,DB,HH(61)
+      DOUBLE PRECISION CNVRT,SN,RAYCON,THNT,DA,DB,HH(61)
       COMMON /BBBB/ SLANT(12,1891),CQMS(12,42)
       DO 5 I=1,NCP1                                                     00005070
     5 HH(I)=1.D00+HHH(I)                                                00005080

@@ -48,6 +48,7 @@ C----------------------------------------------------------------------
       INTEGER        JUNIT
       CHARACTER*(*)  FILENAME
       INCLUDE 'umkehr_common.fix'
+      PRINT *,'UMKEHR_SET_IONAME', FILENAME
       IF (JUNIT .EQ.  5) THEN
           FILENAME_UNIT05 = FILENAME
       ELSE IF (JUNIT .EQ.  8) THEN

@@ -1,33 +1,48 @@
-c **** open input and output data files *****
-      IMPLICIT NONE
-      CHARACTER*60 ft10
-      INTEGER KBN
+C----------------------------------------------------------------------
+C   This is UMKV8                                             02.FEB.2004
+C   IT IS THE MAIN PROGRAM FOR THE NEW C-UMKEHR INVERSION ALGORITHM
+C   USING BASS-PAUR OZONE ABSORPTION COEFFICIENTS. THE ALGORITHM
+C   FOLLOWS EQUATION 100 OF RODGER'S 1976 REVIEW IN REV. GEOPHYS.
+C   & SPACE PHYS., 14(4), PP. 609-624.
+C
+C   Update 2018-11-12, Nick Lloyd for Irina Petropavlovskikh.
+C   ---------------------------------------------------------
+C   This is now a subroutine that contains the core of the original code
+C   Input to the system is through a set of 12 input files and the
+C   parameter KBN.
+C
+C   Parameters:
+C       KBN : Inetger that provides the lowest SZA index.
+C
+C   Input files can be specified by users calling subroutine UMKEHR_SET_IONAMES.
+C   The following 12 input files are utilized by the code. Note that some files
+C   are loaded the first time the routine is called. Others are loaded every time.
+C
+C      Unit 5       'mk2v4cum.inp'
+C      Unit 8       'stdmscdobc_depol_top5.dat'
+C      Unit 9       'fstguess.99b'
+C      Unit 10      'User supplied UMKEHR station file'/
+C      Unit 11      'phprofil.dat'
+C      Unit 13      'refractn.dat'
+C      Unit 15      'nrl.dat'
+C      Unit 18      'std_pfl.asc'
+C      Unit 19      'stdjacmsc.dat'
+C      Unit 79      'totoz_press.dat'
+C      Unit 97      'coef_dobch.dat'
+C      Unit 98      'coef_dobcl.dat'
+C
+C   Outpout originall sent to FORTRAN WRITE statements are now sent to
+C   subroutine UMKEHR_WRITE_STRING. A default implementation is
+C   provided in cimpl_emulator.f which can be used if generating a pure
+C   fortran program. This function is replaced with C/C++ function when
+C   building the python package.
 
-      print*, 'provide the lowest SZA'
-C      read(5,*) KBN
-      KBN = 3
-      print *,KBN
-      print*,'   enter name of input file from decode:  '
-      ft10='test.prn'
-C      read*,ft10
-      print*,ft10
-      CALL UMKEHR_SET_IONAMES( 10, ft10)
-      CALL UMKEHR( KBN)
-      print*,'Finished processing test file'
-      STOP
-      END
-
-
-C *******************************************************************
-C ***** THIS IS UMKV8             ********************* 02.FEB.2004**
-C ***** THIS IS THE MAIN PROGRAM FOR THE NEW C-UMKEHR INVERSION *****
-C ***** ALGORITHM USING BASS-PAUR OZONE ABSORPTION COEFFICIENTS *****
-C ***** THE ALGORITHM FOLLOWS EQUATION 100 OF RODGER'S 1976 REVIEW **
-C ***** IN REV. GEOPHYS. & SPACE PHYS., 14(4), PP. 609-624. *********
-C *******************************************************************
+C----------------------------------------------------------------------
       SUBROUTINE UMKEHR( KBN )
 
       IMPLICIT NONE
+      INTEGER KBN
+
       INCLUDE 'umkehr_common.fix'
 
       REAL PUF(61),DPUF(61),PUFL(61),SLS(61),HH(61),DHH(61),
@@ -83,8 +98,8 @@ C Irina update 9/30/2002
 C     character*60 ft4,ft6,ft14                                          ! UNUSED ,ft12
       CHARACTER*72 HEAD                                                  ! TEMP****
       CHARACTER*18 STATN                                                 ! TEMP****
-      INTEGER IL(61), ISZA(4), KBN
-      REAL*4 DET
+      INTEGER IL(61), ISZA(4)
+      REAL DET
                                                                         !00000140
 C *******************************************************************
 C ***** INITIALIZATION SEGMENT **************************************
@@ -266,10 +281,12 @@ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
          CALL UMKEHR_WRITE_STRING( 14, OUT14)
       ENDIF
       IF (JUZDSK.EQ.0) THEN
-      WRITE(OUT6,6100) STATN,(ID(I),I=3,5),LAM,ID(6),KB,KE,ID(7),OMOBS*1000
+      WRITE(OUT6,6100) STATN,(ID(I),I=3,5),LAM,ID(6),KB,KE,ID(7),
+     1 OMOBS*1000
       CALL UMKEHR_WRITE_STRING( 6, OUT6)
       ELSE
-      WRITE(OUT14,4011)STATN,(ID(I),I=3,5),LAM,ID(6),KB,KE,ID(7),OMOBS*1000
+      WRITE(OUT14,4011)STATN,(ID(I),I=3,5),LAM,ID(6),KB,KE,ID(7),
+     1 OMOBS*1000
       CALL UMKEHR_WRITE_STRING( 14, OUT14)
       WRITE(OUT14,6401)(VNOB(K),K=KB,KE)
       CALL UMKEHR_WRITE_STRING( 14, OUT14)
@@ -766,7 +783,7 @@ C *******************************************************************
       VNFG(K)=VALN(K)
       END DO
       WRITE (OUT14,6402)(SRES(K),K=KB,KE)
-      CALL UMKEHR_WRITE_STRING( 14, OUT6)
+      CALL UMKEHR_WRITE_STRING( 14, OUT14)
 c ****** ADD REFRACTION CORRECTIONS TO FG N-VALUES***********
       DO 2124 I=1,4
       IP=I+1
@@ -1557,7 +1574,7 @@ C      COMMON /BBBB/ SLANT,CQMS, TABJMS
 
       REAL SQCHP,CHPN,SQCHX,CHXN,AMU
       REAL HHH(61),DHH(61),CHPP(61,12),THENOT(12)
-      REAL*8 CNVRT,SN,RAYCON,THNT,DA,DB,HH(61)
+      DOUBLE PRECISION CNVRT,SN,RAYCON,THNT,DA,DB,HH(61)
       INTEGER NCP1,I,J,K,IJ
 
       REAL OMERF
