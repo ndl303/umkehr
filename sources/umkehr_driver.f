@@ -1,18 +1,19 @@
       PROGRAM umkehr_driver
 c **** open input and output data files *****
       IMPLICIT NONE
-      CHARACTER*60 ft10
+      CHARACTER*60 inputfilename
       INTEGER KBN
 
-      print*, 'provide the lowest SZA'
+C      print*, 'provide the lowest SZA'
 C      read(5,*) KBN
+
+      inputfilename = '../testdata/umknov09.jpn'
+      CALL DECODE_CUMKEHR_OBS( inputfilename)
+      CLOSE(UNIT=10)
+
       KBN = 3
       print *,KBN
-      print*,'   enter name of input file from decode:  '
-      ft10='test.prn'
-C      read*,ft10
-      print*,ft10
-      CALL UMKEHR_SET_IONAMES( 10, ft10)
+      CALL UMKEHR_SET_IONAMES( 10, 'fort.10')
       CALL UMKEHR( KBN)
       print*,'Finished processing test file'
       STOP

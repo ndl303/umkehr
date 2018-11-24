@@ -40,8 +40,9 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.1945959553" name="umkehr_driver.f" rcbsApplicability="disable" resourcePath="sources/umkehr_driver.f" toolsToInvoke="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.191834525">
-						<tool id="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.191834525" name="GNU Fortran Compiler" superClass="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699"/>
+					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.57031889" name="umkehr_if.h" rcbsApplicability="disable" resourcePath="sources/umkehr_if.h" toolsToInvoke=""/>
+					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.1201715741" name="cimpl_emulator.f" rcbsApplicability="disable" resourcePath="sources/cimpl_emulator.f" toolsToInvoke="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.486671709">
+						<tool id="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699.486671709" name="GNU Fortran Compiler" superClass="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699"/>
 					</fileInfo>
 					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.141066745" name="umkehr_if.cpp" rcbsApplicability="disable" resourcePath="sources/umkehr_if.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.base.1806237758">
 						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1806237758" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
@@ -49,7 +50,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="sources/umkehr_driver.f|sources/cimpl_emulator.f|sources/umkehr_common.fix|docs|original" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="sources/umkehr_if.h|sources/umkehr_if.cpp|sources/umkehr_common.fix|docs|original" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
