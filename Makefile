@@ -1,11 +1,15 @@
 .SUFFIXES:
-.SUFFIXES: .o .f
+.SUFFIXES: .o .f .for
 
 .f.o:
-	gfortran -c -fmessage-length=0 -std=legacy -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic -c -o $@ $<
+	gfortran -c -fmessage-length=0 -fvisibility=hidden -shared -std=legacy -fpic -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic -c -o $@ $<
+.for.o:
+	gfortran -c -fmessage-length=0 -fvisibility=hidden -shared -std=legacy -fpic -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic -c -o $@ $<
 
 
-VPATH= ./:sources
+VPATH= ./:\
+       sources:\
+       sources/stand-alone-driver
 
 .PHONY: build
 .PHONY: install
@@ -21,8 +25,12 @@ O_DEPENDS=matinvn.o\
           spline.o\
           stndrd.o\
           umkehr_interface.o\
-          umkv8.o
+          umkv8.o\
+          decodev4.o
 
+STAND_ALONE=cimpl_emulator.o\
+            umkehr_driver.o
+            
 #----------------------------------------------------------------------------
 #	Create the main target (e.g.) libnovas.a
 #	and then copy the jpleph binary file to the location specified by the
@@ -31,13 +39,18 @@ O_DEPENDS=matinvn.o\
 #----------------------------------------------------------------------------
 
 build: $(O_DEPENDS) 
-	ar -rc libumkehr.a $(O_DEPENDS)
-	ranlib -v libumkehr.a
+	gfortran -shared -std=legacy -o umkehr.so $(O_DEPENDS) 
+	#ar -rc libumkehr.a $(O_DEPENDS)
+	#ranlib -v libumkehr.a
 	# mkdir -f lib
-	mv libumkehr.a ./lib/libumkehr.a
+	#mv libumkehr.a ./lib/libumkehr.a
 	@echo "Compilation of umkehr source code complete."
 	@echo "*** SUCCESS ***"
 
+standalone: $(O_DEPENDS) $(STAND_ALONE)
+	gfortran -std=legacy -o umkehr_program  $(STAND_ALONE) $(O_DEPENDS)
+	@echo "Compilation of umkehr stand-alone program is complete."
+	@echo "*** SUCCESS ***"
 
 #----------------------------------------------------------------------------
 #	Clean up the release in preparation for a brand new build

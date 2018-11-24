@@ -18,12 +18,18 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\umkehr_if.cpp">
+    <ClCompile Include="fortran_umkehr_emulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\cpp-sources\umkehr_if.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\cpp-sources\umkehr_io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\sources\umkehr_if.h">
+    <ClInclude Include="..\..\..\sources\cpp-sources\umkehr_if.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

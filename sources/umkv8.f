@@ -39,7 +39,6 @@ C   building the python package.
 
 C----------------------------------------------------------------------
       SUBROUTINE UMKEHR( KBN )
-
       IMPLICIT NONE
       INTEGER KBN
 
@@ -1451,6 +1450,16 @@ C ***** COMPUTE FINAL STATISTICS FOR THIS STATION BATCH *************
       CALL UMKEHR_CLOSE_INPUTFILE(98)
       CALL UMKEHR_CLOSE_INPUTFILE(97)
       CALL UMKEHR_CLOSE_INPUTFILE(79)
+      CALL UMKEHR_CLOSE_OUTPUT(4)
+      CALL UMKEHR_CLOSE_OUTPUT(6)
+      CALL UMKEHR_CLOSE_OUTPUT(10)
+      CALL UMKEHR_CLOSE_OUTPUT(14)
+      CALL UMKEHR_CLOSE_OUTPUT(16)
+      CALL UMKEHR_CLOSE_OUTPUT(21)
+      CALL UMKEHR_CLOSE_OUTPUT(22)
+      CALL UMKEHR_CLOSE_OUTPUT(25)
+      CALL UMKEHR_CLOSE_OUTPUT(31)
+
       RETURN                                                            !00004250
 
 C ***** FORMAT STATEMENTS *******************************************

@@ -42,3 +42,23 @@ C----------------------------------------------------------------------
       END
 
 
+C----------------------------------------------------------------------
+C   UMKEHR_CLOSE_OUTPUT
+C   This emulates closing an output stream.
+
+C   Input Parameter
+C   ---------------
+C   JUNIT : The integer number of the fortran file unit
+C
+C----------------------------------------------------------------------
+
+      SUBROUTINE UMKEHR_CLOSE_OUTPUT( JUNIT )
+      IMPLICIT NONE
+      INTEGER       JUNIT
+
+      IF ((JUNIT .NE. 5) .AND. (JUNIT .NE. 6)) THEN
+         CLOSE(UNIT =JUNIT)
+      END IF
+      RETURN
+      END
+

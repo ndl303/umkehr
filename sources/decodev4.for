@@ -1,6 +1,5 @@
       SUBROUTINE DECODE_CUMKEHR_OBS( INPUT_STATION_FILENAME)
       IMPLICIT NONE
-
       CHARACTER *(*) INPUT_STATION_FILENAME
       INCLUDE 'umkehr_common.fix'
 
@@ -213,6 +212,8 @@ C                                                                       !0000136
  9999 CALL DECODE_CLOSE_FILE(12)                                        !file = input file
       CALL DECODE_CLOSE_FILE(11)                                        !file = 'stnindex.dat'
       CALL DECODE_CLOSE_FILE(5)                                         !file = 'decodev4.inp'
+      CALL UMKEHR_CLOSE_OUTPUT(6)
+      CALL UMKEHR_CLOSE_OUTPUT(10)
                                                         !00001510
 C      CALL TIME(result)
 C     print*,'     end   time:   ',result

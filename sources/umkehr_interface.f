@@ -71,7 +71,6 @@ C----------------------------------------------------------------------
 
       SUBROUTINE UMKEHR_SET_IONAMES( JUNIT, FILENAME )
       IMPLICIT NONE
-
       INTEGER        JUNIT
       CHARACTER*(*)  FILENAME
       INCLUDE 'umkehr_common.fix'
