@@ -586,6 +586,7 @@ LIBOBJS
 FOR_FLAGS
 CPP_FLAGS
 PYVERSION
+PYTHON_DLLEXT
 PYTHON_LINK_LIB
 PYTHON_LIB_DIR
 PYTHON_INCLUDE_DIR
@@ -3249,44 +3250,50 @@ $as_echo "ERROR, Cannot find command python3 on your path" >&6; }
    PYTHON_LIB_DIR=NOTFOUND
    PYTHON_INCLUDE_DIR=NOTFOUND
    PYTHON_LINK_LIB=NOTFOUND
+   PYTHON_DLLEXT=NOTFOUND
 else
    PYTHON_LIB_DIR=$(python3 m4/pythonprefix.py)
    PYTHON_LINK_LIB=$(python3 m4/pythonlib.py)
    PYTHON_INCLUDE_DIR=$(python3 m4/pythoninclude.py)
    PYVERSION=$(python3 m4/pythonversion.py)
+   PYTHON_DLLEXT=$(python3 m4/pythonsoextension.py)
 fi
 
-if test  $PYTHON_LIB_DIR == 'NOTFOUND' -o $PYTHON_INCLUDE_DIR == 'NOTFOUND' -o $PYTHON_LINK_LIB == 'NOTFOUND' ; then
+if test  $PYTHON_LIB_DIR == 'NOTFOUND' -o $PYTHON_INCLUDE_DIR == 'NOTFOUND' -o $PYTHON_LINK_LIB == 'NOTFOUND' -o PYTHON_DLLEXT == 'NOTFOUND' ; then
    { $as_echo "$as_me:${as_lineno-$LINENO}: result:   results of the Python check:" >&5
 $as_echo "  results of the Python check:" >&6; }
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python executable :  $ax_python_bin" >&5
-$as_echo "    Python executable :  $ax_python_bin" >&6; }
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Dir       : $PYTHON_LIB_DIR" >&5
-$as_echo "    Library Dir       : $PYTHON_LIB_DIR" >&6; }
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Name      : $PYTHON_LINK_LIB" >&5
-$as_echo "    Library Name      : $PYTHON_LINK_LIB" >&6; }
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python Include Dir: $PYTHON_INCLUDE_DIR" >&5
-$as_echo "    Python Include Dir: $PYTHON_INCLUDE_DIR" >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python executable    : $ax_python_bin" >&5
+$as_echo "    Python executable    : $ax_python_bin" >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Dir          : $PYTHON_LIB_DIR" >&5
+$as_echo "    Library Dir          : $PYTHON_LIB_DIR" >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Name         : $PYTHON_LINK_LIB" >&5
+$as_echo "    Library Name         : $PYTHON_LINK_LIB" >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Shareable object ext : $PYTHON_DLLEXT" >&5
+$as_echo "    Shareable object ext : $PYTHON_DLLEXT" >&6; }
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python Include Dir   : $PYTHON_INCLUDE_DIR" >&5
+$as_echo "    Python Include Dir   : $PYTHON_INCLUDE_DIR" >&6; }
    as_fn_error $? "***** Error in the Python configuration. If python3 is installed you may have to edit the python scripts in the m4 subdirectory to return the proper python directories" "$LINENO" 5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:   results of the Python check:" >&5
 $as_echo "  results of the Python check:" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python version:     $PYVERSION" >&5
-$as_echo "    Python version:     $PYVERSION" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python executable:  $ax_python_bin" >&5
-$as_echo "    Python executable:  $ax_python_bin" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Dir:        $PYTHON_LIB_DIR" >&5
-$as_echo "    Library Dir:        $PYTHON_LIB_DIR" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Name:       $PYTHON_LINK_LIB" >&5
-$as_echo "    Library Name:       $PYTHON_LINK_LIB" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python version       : $PYVERSION" >&5
+$as_echo "    Python version       : $PYVERSION" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python executable    : $ax_python_bin" >&5
+$as_echo "    Python executable    : $ax_python_bin" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Dir          : $PYTHON_LIB_DIR" >&5
+$as_echo "    Library Dir          : $PYTHON_LIB_DIR" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Library Name         : $PYTHON_LINK_LIB" >&5
+$as_echo "    Library Name         : $PYTHON_LINK_LIB" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:     Shareable object ext : $PYTHON_DLLEXT" >&5
+$as_echo "    Shareable object ext : $PYTHON_DLLEXT" >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:     Python Include Dir: $PYTHON_INCLUDE_DIR" >&5
 $as_echo "    Python Include Dir: $PYTHON_INCLUDE_DIR" >&6; }
-
 
 if test x$SWIG_BIN == x; then
    as_fn_error $? "***** Error **** swig is not installed or not available. Please install swig for this user, eg sudo apt-get install swig" "$LINENO" 5
 fi
+
 
 
 

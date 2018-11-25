@@ -98,7 +98,7 @@ bool set_umkehr_inputfolder( const char* inputfolder)
 /** **/
 /*---------------------------------------------------------------------------*/
 
-void get_output_stream( int unit)
+const std::list<std::string>& get_output_stream( int unit)
 {
 
 	const std::list<std::string>& lines = g_fortran_output_array.Lines(unit);
@@ -106,6 +106,7 @@ void get_output_stream( int unit)
 	{
 		printf( "%s\n", (const char*)(iter->c_str()) );
 	}
+	return lines;
 }
 
 
@@ -114,7 +115,7 @@ void get_output_stream( int unit)
 /** **/
 /*---------------------------------------------------------------------------*/
 
-void get_input_stream( int unit)
+const std::list<std::string>& get_input_stream( int unit)
 {
 
 	const std::list<std::string>& lines = g_fortran_input_array.Lines(unit);
@@ -122,6 +123,7 @@ void get_input_stream( int unit)
 	{
 		printf( "%s\n", (const char*)(iter->c_str()) );
 	}
+	return lines;
 }
 
 /*-----------------------------------------------------------------------------

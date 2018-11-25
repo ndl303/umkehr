@@ -19,3 +19,6 @@ data/fort.10
 umkehr_program.exe
 autom4te.cache
 /umkehr_if.so
+config.log
+config.status
+__pycache__

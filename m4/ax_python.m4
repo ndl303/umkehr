@@ -80,29 +80,32 @@ if test x$ax_python_bin = x; then
    PYTHON_LIB_DIR=NOTFOUND
    PYTHON_INCLUDE_DIR=NOTFOUND
    PYTHON_LINK_LIB=NOTFOUND
+   PYTHON_DLLEXT=NOTFOUND
 else
    PYTHON_LIB_DIR=$(python3 m4/pythonprefix.py)
    PYTHON_LINK_LIB=$(python3 m4/pythonlib.py)
    PYTHON_INCLUDE_DIR=$(python3 m4/pythoninclude.py)
    PYVERSION=$(python3 m4/pythonversion.py)
+   PYTHON_DLLEXT=$(python3 m4/pythonsoextension.py)
 fi
 
-if test [ $PYTHON_LIB_DIR == 'NOTFOUND' -o $PYTHON_INCLUDE_DIR == 'NOTFOUND' -o $PYTHON_LINK_LIB == 'NOTFOUND' ]; then
+if test [ $PYTHON_LIB_DIR == 'NOTFOUND' -o $PYTHON_INCLUDE_DIR == 'NOTFOUND' -o $PYTHON_LINK_LIB == 'NOTFOUND' -o PYTHON_DLLEXT == 'NOTFOUND' ]; then
    AC_MSG_RESULT([  results of the Python check:])
-   AC_MSG_RESULT([    Python executable :  $ax_python_bin])
-   AC_MSG_RESULT([    Library Dir       : $PYTHON_LIB_DIR])
-   AC_MSG_RESULT([    Library Name      : $PYTHON_LINK_LIB])
-   AC_MSG_RESULT([    Python Include Dir: $PYTHON_INCLUDE_DIR])
+   AC_MSG_RESULT([    Python executable    : $ax_python_bin])
+   AC_MSG_RESULT([    Library Dir          : $PYTHON_LIB_DIR])
+   AC_MSG_RESULT([    Library Name         : $PYTHON_LINK_LIB])
+   AC_MSG_RESULT([    Shareable object ext : $PYTHON_DLLEXT])
+   AC_MSG_RESULT([    Python Include Dir   : $PYTHON_INCLUDE_DIR])
    AC_MSG_ERROR([***** Error in the Python configuration. If python3 is installed you may have to edit the python scripts in the m4 subdirectory to return the proper python directories])
 fi
 
 AC_MSG_RESULT([  results of the Python check:])
-AC_MSG_RESULT([    Python version:     $PYVERSION])
-AC_MSG_RESULT([    Python executable:  $ax_python_bin])
-AC_MSG_RESULT([    Library Dir:        $PYTHON_LIB_DIR])
-AC_MSG_RESULT([    Library Name:       $PYTHON_LINK_LIB])
+AC_MSG_RESULT([    Python version       : $PYVERSION])
+AC_MSG_RESULT([    Python executable    : $ax_python_bin])
+AC_MSG_RESULT([    Library Dir          : $PYTHON_LIB_DIR])
+AC_MSG_RESULT([    Library Name         : $PYTHON_LINK_LIB])
+AC_MSG_RESULT([    Shareable object ext : $PYTHON_DLLEXT])
 AC_MSG_RESULT([    Python Include Dir: $PYTHON_INCLUDE_DIR])
-
 
 if test [x$SWIG_BIN == x]; then
    AC_MSG_ERROR([***** Error **** swig is not installed or not available. Please install swig for this user, eg sudo apt-get install swig])
@@ -111,6 +114,7 @@ fi
 AC_SUBST(PYTHON_INCLUDE_DIR)
 AC_SUBST(PYTHON_LIB_DIR)
 AC_SUBST(PYTHON_LINK_LIB)
+AC_SUBST(PYTHON_DLLEXT)
 AC_SUBST(PYVERSION)
 
 ])dnl
