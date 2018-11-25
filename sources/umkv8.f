@@ -99,6 +99,8 @@ C     character*60 ft4,ft6,ft14                                          ! UNUSE
       CHARACTER*18 STATN                                                 ! TEMP****
       INTEGER IL(61), ISZA(4)
       REAL DET
+      CHARACTER*200 ALINE
+      INTEGER       IEOF
                                                                         !00000140
 C *******************************************************************
 C ***** INITIALIZATION SEGMENT **************************************
@@ -188,8 +190,9 @@ C *****END OF INITIALIZATION SEGMENT ********************************
 C ***** BEGIN PROCESSING DATA FOR FIRST UMKEHR STATION **************
 C ***** INITIALIZATION FOR STATION BATCH OF UMKEHR DATA *************
 C *******************************************************************
-
-  190 READ (10,5010, END=9999, IOSTAT=IOS) ISN,STATN,ALAT,PNOT,HGT      !TEMP****
+  190 CALL UMKEHR_READ_LINE( 10, IEOF, ALINE )
+      IF (IEOF .NE. 0) GOTO 9999
+      READ (ALINE,5010, END=9999, IOSTAT=IOS) ISN,STATN,ALAT,PNOT,HGT      !TEMP****
       IF (IOS .NE. 0) THEN
          GOTO 9999
       END IF
@@ -246,7 +249,9 @@ C *******************************************************************
 C ***** END OF INITIALIZATION FOR THIS STATION **********************
 C ***** READ STANDARD C-UMKEHR DATA FOR THIS STATION ****************
 C *******************************************************************
-  220 READ (10,5600,END=900) (ID(I),I=3,6),LAM,KB,KE,ID(7),             !TEMP****
+  220 CALL UMKEHR_READ_LINE( 10, IEOF, ALINE )
+      IF (IEOF .NE. 0) GOTO 900
+      READ (ALINE,5600,END=900) (ID(I),I=3,6),LAM,KB,KE,ID(7),          !TEMP****
      1 IOMEGA,(VNOB(K),K=1,12),ISTN                                     !00000980
 c       KBN=5
         if(KB.lt.KBN) KB=KBN

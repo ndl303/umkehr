@@ -1,0 +1,44 @@
+AC_INIT( sasktranif, 4.1 )
+m4_include([m4/ax_python.m4])
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_F77( gfortran g77 f77 g95 f90 fort77 fl32)
+AX_PYTHON
+
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[enable debugging, default: no]), [case "${enableval}" in  yes) debug=true ;; no)  debug=false ;; *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;; esac], [debug=false])
+
+#------------------------------------------------------------------------------------
+#  Setup the directories we need to build the Repos_skclimatology stuff.
+#  We ned to know the current directory, this is the source code base.
+#-------------------------------------------------------------------------------------
+
+sourcebase=`pwd`
+
+#-----------------------------------------------------------------------------
+#	Set the compiler flags
+#-----------------------------------------------------------------------------
+
+if [test x"$debug" == x"true"]; then
+	AC_MSG_NOTICE( [Building the DEBUG versions of the library to ${prefix}] )
+	CPP_FLAGS="-std=c++11 -fvisibility=hidden -g -fPIC -I./"
+	FOR_FLAGS="-g -fmessage-length=0 -fvisibility=hidden -shared -std=legacy -fpic -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic"
+else
+	AC_MSG_NOTICE( [Building the Release versions of the library to ${prefix}] )
+	CPP_FLAGS="-O3 -std=c++11 -fvisibility=hidden -fPIC -I./"
+	FOR_FLAGS="-fmessage-length=0 -fvisibility=hidden -shared -std=legacy -fpic -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic"
+fi
+
+
+#-----------------------------------------------------------------------------
+#	Set the variables to export to the makefiles
+#-----------------------------------------------------------------------------	
+
+AC_SUBST(CPP_FLAGS)
+AC_SUBST(FOR_FLAGS)
+
+#------------------------------------------------------------------------------
+#	Export to the makefiles
+#------------------------------------------------------------------------------
+
+#AC_OUTPUT( Makefile makefile.sasktranif buildwheel/setup.py)
+AC_OUTPUT( Makefile )

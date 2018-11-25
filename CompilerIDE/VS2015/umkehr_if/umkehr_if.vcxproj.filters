@@ -27,6 +27,9 @@
     <ClCompile Include="..\..\..\sources\cpp-sources\umkehr_io.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\sources\cpp-sources\ctest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\cpp-sources\umkehr_if.h">

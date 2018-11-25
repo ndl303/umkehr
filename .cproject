@@ -21,7 +21,12 @@
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="photran.managedbuild.target.gnu.platform.win32.exe.debug.1264236833" name="Debug Platform" osList="win32" superClass="photran.managedbuild.target.gnu.platform.win32.exe.debug"/>
 							<builder buildPath="${workspace_loc:/umkehr}/Debug" id="photran.managedbuild.target.gnu.builder.win32.exe.debug.521360466" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="photran.managedbuild.target.gnu.builder.win32.exe.debug"/>
 							<tool id="photran.managedbuild.tool.gnu.c.compiler.win32.exe.debug.1110905125" name="GCC C Compiler" superClass="photran.managedbuild.tool.gnu.c.compiler.win32.exe.debug">
-								<option id="gnu.c.compiler.option.misc.other.1276922985" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 " valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.1276922985" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fvisibility=hidden" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.pic.185470747" name="Position Independent Code (-fPIC)" superClass="gnu.c.compiler.option.misc.pic" value="true" valueType="boolean"/>
+								<option id="gnu.c.compiler.option.include.paths.1735751661" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="./"/>
+								</option>
+								<option id="gnu.c.compiler.option.dialect.std.992056094" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.c11" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.994005298" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug.1844002699" name="GNU Fortran Compiler" superClass="photran.managedbuild.tool.gnu.fortran.compiler.win32.exe.debug">
@@ -42,9 +47,16 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.1138124051" name="umkehr_if.h" rcbsApplicability="disable" resourcePath="sources/cpp-sources/umkehr_if.h" toolsToInvoke=""/>
-					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.1125794583" name="umkehr_if.cpp" rcbsApplicability="disable" resourcePath="sources/cpp-sources/umkehr_if.cpp" toolsToInvoke=""/>
+					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.1643716800" name="umkehr_io.cpp" rcbsApplicability="disable" resourcePath="sources/cpp-sources/umkehr_io.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.base.112223363">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.112223363" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base"/>
+					</fileInfo>
+					<fileInfo id="photran.managedbuild.config.gnu.fortran.win32.exe.debug.2035284691.1125794583" name="umkehr_if.cpp" rcbsApplicability="disable" resourcePath="sources/cpp-sources/umkehr_if.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.base.1396979614">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1396979614" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
+							<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1004335504" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="sources/cpp-sources/umkehr_if.h|sources/cpp-sources/umkehr_if.cpp|sources/umkehr_if.h|sources/umkehr_if.cpp|sources/umkehr_common.fix|docs|original" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="sources/stand-alone-driver/umkehr_driver.f|sources/stand-alone-driver/cimpl_emulator.f|sources/umkehr_if.h|sources/umkehr_if.cpp|sources/umkehr_common.fix|docs|original" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

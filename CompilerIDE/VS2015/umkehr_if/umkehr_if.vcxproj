@@ -143,6 +143,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\sources\cpp-sources\ctest.cpp" />
     <ClCompile Include="..\..\..\sources\cpp-sources\umkehr_io.cpp" />
     <ClCompile Include="..\..\..\sources\cpp-sources\umkehr_if.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

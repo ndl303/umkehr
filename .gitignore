@@ -17,3 +17,5 @@ original/nickdat.dat
 /CompilerIDE/VS2015/umkehr_if/*.opendb
 data/fort.10
 umkehr_program.exe
+autom4te.cache
+/umkehr_if.so

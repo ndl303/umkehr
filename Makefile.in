@@ -2,11 +2,11 @@
 .SUFFIXES: .o .f .for .cpp
 
 .f.o:
-	gfortran -fmessage-length=0 -fvisibility=hidden -shared -std=legacy -fpic -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic -c -o $@ $<
+	gfortran @FOR_FLAGS@ -c -o $@ $<
 .for.o:
-	gfortran -fmessage-length=0 -fvisibility=hidden -shared -std=legacy -fpic -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic -c -o $@ $<
+	gfortran @FOR_FLAGS@ -c -o $@ $<
 .cpp.o:
-	g++ -O3 -std=c++11 -fvisibility=hidden -fPIC -I./ -I C:/msys64/mingw64/include/python3.7m -c -o $@ $<
+	g++ @CPP_FLAGS@ -I @PYTHON_INCLUDE_DIR@ -c -o $@ $<
 
 VPATH= ./:\
        sources:\
@@ -44,7 +44,7 @@ STAND_ALONE=cimpl_emulator.o\
 #----------------------------------------------------------------------------
 
 build: $(O_DEPENDS) $(CPP_DEPENDS)
-	g++ -shared -o umkehr_if.so $(O_DEPENDS) $(CPP_DEPENDS) -LC:/msys64/mingw64/lib -lpython3.7m.dll -lgfortran  -lm
+	g++ -shared -o umkehr_if.so $(O_DEPENDS) $(CPP_DEPENDS) -L@PYTHON_LIB_DIR@ -l@PYTHON_LINK_LIB@ -lgfortran  -lm
 	@echo "Build of umkehr_if python interface complete."
 	@echo "*** SUCCESS ***"
 
