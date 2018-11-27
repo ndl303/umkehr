@@ -40,4 +40,4 @@ AC_SUBST(FOR_FLAGS)
 #	Export to the makefiles
 #------------------------------------------------------------------------------
 
-AC_OUTPUT( Makefile python/setup.py )
+AC_OUTPUT( Makefile setup.py )
