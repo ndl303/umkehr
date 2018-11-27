@@ -45,8 +45,9 @@ STAND_ALONE=cimpl_emulator.o\
 
 build: $(O_DEPENDS) $(CPP_DEPENDS)
 	pushd ./sources/cpp-sources; swig -c++ -python -py3 -naturalvar umkehr_if.i; popd
+	mv -f ./sources/cpp-sources/umkehr_if.py ./python/umkehr_if/umkehr_if.py 
 	g++ -O3 -std=c++11 -fvisibility=hidden -fPIC -I./ -I C:/msys64/mingw64/include/python3.7m -c -o umkehr_if_wrap.o ./sources/cpp-sources/umkehr_if_wrap.cxx
-	g++ -shared -o _umkehr_if.pyd umkehr_if_wrap.o $(O_DEPENDS) $(CPP_DEPENDS) -LC:/msys64/mingw64/lib -lpython3.7m.dll -lgfortran  -lm
+	g++ -shared -o umkehr_if/_umkehr_if.pyd umkehr_if_wrap.o $(O_DEPENDS) $(CPP_DEPENDS) -LC:/msys64/mingw64/lib -lpython3.7m.dll -lgfortran  -lm
 	rm -f *.o
 	@echo "Build of umkehr_if python interface complete."
 	@echo "*** SUCCESS ***"
