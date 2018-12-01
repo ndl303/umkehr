@@ -9,9 +9,22 @@
 const std::string& FortranUnitBuffer::GetNextReadBack()
 {
 	static std::string empty;
+	bool				ok;
 
-	if (m_iterator == m_lines.end()) return empty;
-	return *m_iterator++;
+	ok = (m_iterator != m_lines.end());
+	return  ok ? *m_iterator++: empty;
+}
+
+
+/*-----------------------------------------------------------------------------
+ *					FortranUnitBuffer::StartReadBack		 2018- 12- 1*/
+/** **/
+/*---------------------------------------------------------------------------*/
+
+bool FortranUnitBuffer::StartReadBack()
+{
+	m_iterator = m_lines.begin(); 
+	return true;
 }
 
 /*-----------------------------------------------------------------------------
@@ -50,12 +63,13 @@ bool FortranUnitsArray::StartReadBack( int unit )
 
 const std::string& FortranUnitsArray::GetNextReadBack( int unit, bool* endoffile)
 {
+	static std::string empty; 
 	std::shared_ptr<FortranUnitBuffer> buffer = Buffer(unit, false);
 	bool                               ok     = buffer.get() != nullptr;
 
-	ok = ok && buffer->EndOfReadBack();
-	*endoffile = ok;
-	return buffer->GetNextReadBack();
+	ok = ok && !buffer->EndOfReadBack();
+	*endoffile = !ok;
+	return  ok ? buffer->GetNextReadBack(): empty;
 }
 
 
@@ -108,5 +122,10 @@ std::shared_ptr<FortranUnitBuffer> FortranUnitsArray::Buffer( int unit, bool aut
 		ok   = val.second;
 	}
 	if (ok) buffer = (iter->second);
+	if (!ok)
+	{
+		printf("FortranUnitsArray::Buffer, the requested unit (%d) does not exist\n", (int)unit);
+		fflush(stdout);
+	}
 	return buffer;
 }

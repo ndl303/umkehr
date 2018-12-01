@@ -1,18 +1,44 @@
 
+Inputs
+======
+
+Units
+
+Unit       File
+----      -----
+
+4         Output   umout, O3 profile                    Fortran writes to python buffer
+5         Input    mk2v4cum.inp                         default in python package
+6         Output   Umkehr retrieval statistics          Fortran writes to python buffer.
+8         Input    stdmscdobc_depol_top5.dat            static
+9         Input    fstguess.dat                         default in python package
+10        Output   output from DECODE                   Fortran writes to python buffer
+10        Input    input to UMKEHR                      reads from python buffer
+11        Input    phprofil.dat                         default in python package
+13        Input    refractn.dat                         default in python package
+18        Input    std_pfl.asc                          default in python package
+19        Input    stdjacmsc.dat                        default in python package
+14        Output   uprint, Averaging Kernels            Fortran writes to python buffer
+15        Input    nrl.dat                              default in python package
+21        Output                                        Fortran writes to python buffer
+22        Output                                        Fortran writes to python buffer
+25        Output                                        Fortran writes to python buffer
+31        Output                                        Fortran writes to python buffer
+
 phprofile.dat
-=============
+-------------
 
 Unit 11, phprofil.dat. SUBROUTINE STNDRD. INITIALIZATION STAGE. READS 81 ELEEMNT STANDARD PRESSURE-HEIGHT PROFILE AND SPLINE INTERPOLATES FOR FORWARD MODEL CALCULATION
 
 refractn.dat
-============
+------------
 LINE 235
 Unit 13, refractn.dat. MAIN ROUTINE, INITIALIZATION , Reads An Array of Refraction corrections
 5 lines
 Total refraction + 12 refraction corrections
 
 fstguess.dat
-============
+------------
 
 9  fstguess.dat, SUBROUTINE SASCO3 (ID,IFGLAT,PNOT,OMOBS,TDX)
 SUBROUTINE TO CREATE SASC STANDARD PROFILES. FG is based on seasonal cycle in all 16 layers, NOT the total ozone
@@ -43,14 +69,14 @@ TOTAL OZONE IN M ATM-CM
 
 
 stdmscdobc_depol_top5
-=====================
+---------------------
 
 LINE 192
 8 stdmscdobc_depol_top5.dat, 
 READ MULTIPLE SCATTERING CORRECTIONS array ( 12,42)
 
 std_pfl.asc
-===========
+-----------
 
 LINE 189
 READ FG, READ Total ozone at pressure levels 0.5, 0.8, 0.7, 0.9
@@ -63,7 +89,7 @@ TABFG(61,12)
 This is file for tabulated ("look-up") data:
 "stdmscdobc_depol_top5.dat" - file to correct for multiple-scattering component of  the 
 N-values calculated in forward model as single-scatted radiances;
-"stdrfcdobc_depol_top5_std21.dat" – file to correct N-value for atmospheric refraction of 
+"stdrfcdobc_depol_top5_std21.dat" file to correct N-value for atmospheric refraction of
 the solar radiation;
 
 These data are organized as following: 
@@ -127,14 +153,14 @@ beta is Rayleigh extinction coefficient.
 
 
 stdjacmsc.dat
-=============
+-------------
 
 LINE 197
 READ MULTIPLE SCATTERING CORRECTIONS JACOBEAN, Array (61,13,21)
 19 stdjacmsc.dat
 
 nrl.dat
-=======
+-------
 
 Line 205
 Read in NRL temperature/altitude climatology for monthly mean and zonal
@@ -144,7 +170,7 @@ Array( 12,45, 19)
 15 nrl.dat
 
 coef_dobcl.dat
-==============
+--------------
 
 Line 129
 READ spectral parameters
@@ -153,7 +179,7 @@ Lambda, slit function, ET flux, alfa0, alfat, alfatt, beta, rho
 98 coef_dobcl.dat
 
 coef_dobch.dat
-==============
+--------------
 97 coef_dobch.dat
 
 Line 162
@@ -161,7 +187,7 @@ READ spectral parameters
 Lambda, slit function, ET flux, alfa0, alfat, alfatt, beta, rho
 
 totoz_press.dat
-===============
+---------------
 Line 188, C READ Total ozone at pressure levels 0.5, 0.8, 0.7, 0.9
 Array(21)
 79 totoz_press.dat
@@ -169,7 +195,7 @@ Array(21)
 
 
 output
-======
+------
 
 Feb 10, 2006
 Final stage of reprocessing Umkehr data using FAP03 algorithm.
@@ -205,7 +231,7 @@ VARED is reduction in variance or difference between apriori Sx and total error 
     AKTSEKI is (K *SX* K^T+ Se)^-1, and AKTF*K is AK=Sx*K^T*K*(K *SX* K^T+ Se)^-1 =Sx*(K *SX* K^T+ Se)^-1 
 
 FAP03 Algorithm
-===============
+---------------
 Jan 5, 2004
 Final stage of reprocessing Umkehr data using FAP03 algorithm.
 

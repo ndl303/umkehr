@@ -35,5 +35,8 @@
     <ClInclude Include="..\..\..\sources\cpp-sources\umkehr_if.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\sources\cpp-sources\umkehr_pythonif.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

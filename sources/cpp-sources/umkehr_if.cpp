@@ -7,6 +7,21 @@
 FortranUnitsArray	g_fortran_output_array;			// Array of buffers to save fortran output
 FortranUnitsArray	g_fortran_input_array;			// Array of buffers used for fortran input
 
+
+/*-----------------------------------------------------------------------------
+ *					reset_io_buffers		 2018- 11- 30*/
+/** Reset all of the internal buffers so they are empty
+**/
+/*---------------------------------------------------------------------------*/
+
+void clear_io_buffers()
+{
+	g_fortran_output_array.Clear();
+	g_fortran_input_array.Clear();
+	fflush(stdout);
+
+}
+
 /*-----------------------------------------------------------------------------
  *					trim_fortran_string		 2018- 11- 24*/
 /** **/
@@ -17,7 +32,9 @@ const char* trim_fortran_string(  const char* str, size_t len )
 	static char buffer[6000];
 	bool		iswhite = true;
 
-	strncpy_s( buffer, 6000, str, len);
+	if (len > 6000) len = 6000;
+	strncpy( buffer, str, len);
+	len--;
 	buffer[len] = '\0';
 	while (iswhite && (len > 0))
 	{
@@ -36,6 +53,7 @@ const char* trim_fortran_string(  const char* str, size_t len )
 extern "C" void CONSOLEMSG            (const char* str, size_t len)
 {
 	printf( "%s\n", (const char*) trim_fortran_string(str, len) );
+	fflush(stdout);
 }
 
 /*-----------------------------------------------------------------------------
@@ -63,7 +81,7 @@ extern "C" void  UMKEHR_CLOSE_OUTPUT( int* JUNIT )
 
 /*-----------------------------------------------------------------------------
  *					UMKEHR_READ_LINE		 2018- 11- 25*/
-/** Returns the next line of text from an input strteam as a fortran
+/** Returns the next line of text from an input stream as a fortran
  *	string. The next input line is copied to the fotran string and is
  *	padded with spaces. The Fortran string does not require a null terminator
  **/
@@ -72,16 +90,27 @@ extern "C" void  UMKEHR_CLOSE_OUTPUT( int* JUNIT )
 extern "C" void UMKEHR_READ_LINE( int* JUNIT, int* IEOF, char* ALINE, size_t len )
 {
 	bool				endoffile;
-	const std::string&	line = g_fortran_output_array.GetNextReadBack( *JUNIT, &endoffile);
+	const std::string&	line = g_fortran_input_array.GetNextReadBack( *JUNIT, &endoffile);
 
 	*IEOF = endoffile ?  1 : 0;
+
 	for (size_t i = 0; i < len; i++)
 	{
 		if (i >= line.size()) ALINE[i] = ' ';
-		else                  ALINE[i] = line.at(i);                  
+		else                  ALINE[i] = line.at(i);
 	}
 }
 
+
+/*-----------------------------------------------------------------------------
+ *					write_to_internal_input_buffer		 2018- 11- 30*/
+/** Used by Python to write to an internal buffer in the output array**/
+/*---------------------------------------------------------------------------*/
+
+void write_to_input_buffer (int unit, const char* line)
+{
+	g_fortran_input_array.Write( unit, std::string(line) );
+}
 /*-----------------------------------------------------------------------------
  *					set_umkehr_inputfolder		 2018- 11- 25*/
 /** **/
@@ -102,10 +131,6 @@ const std::list<std::string>& get_output_stream( int unit)
 {
 
 	const std::list<std::string>& lines = g_fortran_output_array.Lines(unit);
-	for (auto iter = lines.begin(); iter != lines.end(); iter++)
-	{
-		printf( "%s\n", (const char*)(iter->c_str()) );
-	}
 	return lines;
 }
 
@@ -119,10 +144,6 @@ const std::list<std::string>& get_input_stream( int unit)
 {
 
 	const std::list<std::string>& lines = g_fortran_input_array.Lines(unit);
-	for (auto iter = lines.begin(); iter != lines.end(); iter++)
-	{
-		printf( "%s\n", (const char*)(iter->c_str()) );
-	}
 	return lines;
 }
 
@@ -141,19 +162,14 @@ void set_umkehr_input_filename( int unit, const char*  fullname )
 /** **/
 /*---------------------------------------------------------------------------*/
 
-bool analyze_umkehr( const char* inputfilename, int KBN  )
+bool analyze_umkehr( int KBN  )
 {
 	g_fortran_output_array.Clear();															// Clear the output array
-
-	set_umkehr_input_filename( 10, inputfilename);
-	DECODE_CUMKEHR_OBS( inputfilename, strlen(inputfilename) );								// Decode the input UMKEHR file
-	printf("DONE DECODE\n");
+	g_fortran_input_array.StartReadBack(12);												// Prepare to start reading on unit 12
+	DECODE_CUMKEHR_OBS( );																	// Decode the input UMKEHR file
 	get_output_stream     (10);
-	printf("Copying over to input\n");
-
 	g_fortran_input_array.CopyUnitForReadBack( 10, 10, g_fortran_output_array );			// Copy Unit 10 over to unit 10 on the input array so the UMKEHR algorithm can pipe in from this unit.
 	get_input_stream     (10);
-	printf("Starting UMKEHR\n");
 	UMKEHR( &KBN );
     return 0;
 }

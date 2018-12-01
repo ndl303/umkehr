@@ -1,8 +1,8 @@
 #include "umkehr_if.h"
 
-extern "C" void DECODE_CUMKEHR_OBS    ( const char* station_inputfilename, size_t len)
+extern "C" void DECODE_CUMKEHR_OBS    ()
 {
-	printf("Calling DECODE_CUMKEHR_OBS with file %s\n", (const char*)station_inputfilename);
+	printf("Calling DECODE_CUMKEHR_OBS\n" );
 }
 extern "C" void UMKEHR                ( int* KBN )
 {

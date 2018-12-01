@@ -21,7 +21,7 @@
 #define CONSOLEMSG				consolemsg_					// Fortran calls this C++ function to writye a log message to the console
 #define UMKEHR_READ_LINE		umkehr_read_line_			// Fortran calls this C++ function to reads a line of text from an input stream.
 
-extern "C" void DECODE_CUMKEHR_OBS    ( const char* station_inputfilename, size_t len);
+extern "C" void DECODE_CUMKEHR_OBS    ( );
 extern "C" void UMKEHR                ( int* KBN );
 extern "C" void UMKEHR_SET_INPUTFOLDER( const char* str, size_t len );
 extern "C" void UMKEHR_SET_IONAMES    ( int* JUNIT,  const char* str, size_t len );
@@ -41,7 +41,7 @@ class FortranUnitBuffer
 	public:
 										FortranUnitBuffer	()							{ }
 		bool							AddLine				( const std::string& str)	{ m_lines.push_back( str ); return true; }
-		bool							StartReadBack		()							{ m_iterator = m_lines.begin(); return true;}
+		bool							StartReadBack		();
 		bool							EndOfReadBack		()							{ return (m_iterator == m_lines.end());}
 		const std::list< std::string>&	Lines				()							{ return m_lines;}
 		const std::string&				GetNextReadBack		();

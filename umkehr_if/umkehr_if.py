@@ -276,6 +276,14 @@ StringList_swigregister = _umkehr_if.StringList_swigregister
 StringList_swigregister(StringList)
 
 
+def clear_io_buffers() -> "void":
+    return _umkehr_if.clear_io_buffers()
+clear_io_buffers = _umkehr_if.clear_io_buffers
+
+def write_to_input_buffer(unit: 'int', line: 'char const *') -> "void":
+    return _umkehr_if.write_to_input_buffer(unit, line)
+write_to_input_buffer = _umkehr_if.write_to_input_buffer
+
 def set_umkehr_inputfolder(inputfolder: 'char const *') -> "bool":
     return _umkehr_if.set_umkehr_inputfolder(inputfolder)
 set_umkehr_inputfolder = _umkehr_if.set_umkehr_inputfolder
@@ -292,8 +300,8 @@ def set_umkehr_input_filename(unit: 'int', fullname: 'char const *') -> "void":
     return _umkehr_if.set_umkehr_input_filename(unit, fullname)
 set_umkehr_input_filename = _umkehr_if.set_umkehr_input_filename
 
-def analyze_umkehr(inputfilename: 'char const *', KBN: 'int') -> "bool":
-    return _umkehr_if.analyze_umkehr(inputfilename, KBN)
+def analyze_umkehr(KBN: 'int') -> "bool":
+    return _umkehr_if.analyze_umkehr(KBN)
 analyze_umkehr = _umkehr_if.analyze_umkehr
 # This file is compatible with both classic and new-style classes.
 

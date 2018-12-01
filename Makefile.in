@@ -44,7 +44,7 @@ STAND_ALONE=cimpl_emulator.o\
 #----------------------------------------------------------------------------
 
 build: $(O_DEPENDS) $(CPP_DEPENDS)
-	pushd ./sources/cpp-sources; swig -c++ -python -py3 -naturalvar umkehr_if.i; popd
+	cd ./sources/cpp-sources; swig -c++ -python -py3 -naturalvar umkehr_if.i; cd ../../
 	mv -f ./sources/cpp-sources/umkehr_if.py ./umkehr_if/umkehr_if.py 
 	g++ @CPP_FLAGS@ -I @PYTHON_INCLUDE_DIR@ -c -o umkehr_if_wrap.o ./sources/cpp-sources/umkehr_if_wrap.cxx
 	g++ -shared -o umkehr_if/_umkehr_if.@PYTHON_DLLEXT@ umkehr_if_wrap.o $(O_DEPENDS) $(CPP_DEPENDS) -L@PYTHON_LIB_DIR@ -l@PYTHON_LINK_LIB@ -lgfortran  -lm

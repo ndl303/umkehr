@@ -1,6 +1,6 @@
-      SUBROUTINE DECODE_CUMKEHR_OBS( INPUT_STATION_FILENAME)
+      SUBROUTINE DECODE_CUMKEHR_OBS( )
       IMPLICIT NONE
-      CHARACTER *(*) INPUT_STATION_FILENAME
+C     CHARACTER *(*) INPUT_STATION_FILENAME
       INCLUDE 'umkehr_common.fix'
 
 C *******************************************************************
@@ -17,6 +17,8 @@ C *******************************************************************
       INTEGER   NNSTD(14),ISN(100)
       CHARACTER*18 STN(100)                                             !00000080
       INTEGER   CHOICE,AD(7)
+      CHARACTER*300 ALINE
+      INTEGER       IEOF
 
       CHARACTER*4 AD1
       CHARACTER*1 AD2
@@ -37,13 +39,12 @@ C      CHARACTER*30 ft10
 
       ITAIL=99                                                          !00000150
       JUMP=0                                                            !00000160
-
 c *** open input and output files ****
 C     open (unit=10,file=ft10,status='new')
 C     open (6,file='unit6.prn',status='new')
-      open (unit=12,file=INPUT_STATION_FILENAME,status='old')
-      CALL DECODE_OPEN_INPUTFILE(11)                                         !open (unit=11,file='stnindex.dat',status='old')
-      CALL DECODE_OPEN_INPUTFILE(5)                                          !open (unit=5,file='decodev4.inp',status='old')
+C      open (unit=12,file=INPUT_STATION_FILENAME,status='old')          Python now writes to an internal buffer
+      CALL DECODE_OPEN_INPUTFILE(11)                                    !open (unit=11,file='stnindex.dat',status='old')
+      CALL DECODE_OPEN_INPUTFILE(5)                                     !open (unit=5,file='decodev4.inp',status='old')
 C      call time(result)
 C      print*,'     start time:  ',result
 C ****
@@ -57,8 +58,12 @@ C                                                                       !0000019
       READ (11,5100) ((NSTD(K,I),K=1,14),I=1,3)                         !00000220
 C                                                                       !00000230
       I=0
-    1 READ (12,5200,END=600) AD1,AD2,(AD(J),J=3,5),AD6,LAM,AD7,IOMEGA,            !00000240
-     1 (NVAL(J),J=1,14),ISTN                                            !00000250
+C   1 READ (12,5200,END=600) AD1,AD2,(AD(J),J=3,5),AD6,LAM,AD7,IOMEGA,  !00000240
+C    1 (NVAL(J),J=1,14),ISTN                                            !00000250
+    1 CALL UMKEHR_READ_LINE( 12, IEOF, ALINE )
+      IF (IEOF .NE. 0) GOTO 600
+      READ(ALINE,5200) AD1,AD2,(AD(J),J=3,5),AD6,LAM,AD7,IOMEGA,
+     1 (NVAL(J),J=1,14),ISTN
       I=I+1
       IF (I.LT.IBEG) GO TO 1
       IF (I.GT.IEND) GO TO 600

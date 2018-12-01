@@ -5133,9 +5133,6 @@ SWIGINTERN std::list< std::string >::iterator std_list_Sl_std_string_Sg__erase__
 SWIGINTERN std::list< std::string >::iterator std_list_Sl_std_string_Sg__insert__SWIG_0(std::list< std::string > *self,std::list< std::string >::iterator pos,std::list< std::string >::value_type const &x){ return self->insert(pos, x); }
 SWIGINTERN void std_list_Sl_std_string_Sg__insert__SWIG_1(std::list< std::string > *self,std::list< std::string >::iterator pos,std::list< std::string >::size_type n,std::list< std::string >::value_type const &x){ self->insert(pos, n, x); }
 
-
-
-
 SWIGINTERN int
 SWIG_AsVal_int (PyObject * obj, int *val)
 {
@@ -5150,6 +5147,9 @@ SWIG_AsVal_int (PyObject * obj, int *val)
   }  
   return res;
 }
+
+
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -7979,6 +7979,51 @@ SWIGINTERN PyObject *StringList_swigregister(PyObject *SWIGUNUSEDPARM(self), PyO
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_clear_io_buffers(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)":clear_io_buffers")) SWIG_fail;
+  clear_io_buffers();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_write_to_input_buffer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  char *arg2 = (char *) 0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:write_to_input_buffer",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "write_to_input_buffer" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  res2 = SWIG_AsCharPtrAndSize(obj1, &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "write_to_input_buffer" "', argument " "2"" of type '" "char const *""'");
+  }
+  arg2 = reinterpret_cast< char * >(buf2);
+  write_to_input_buffer(arg1,(char const *)arg2);
+  resultobj = SWIG_Py_Void();
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return resultobj;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) delete[] buf2;
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_set_umkehr_inputfolder(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *arg1 = (char *) 0 ;
@@ -8083,34 +8128,22 @@ fail:
 
 SWIGINTERN PyObject *_wrap_analyze_umkehr(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  char *arg1 = (char *) 0 ;
-  int arg2 ;
-  int res1 ;
-  char *buf1 = 0 ;
-  int alloc1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  int arg1 ;
+  int val1 ;
+  int ecode1 = 0 ;
   PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
   bool result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:analyze_umkehr",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "analyze_umkehr" "', argument " "1"" of type '" "char const *""'");
-  }
-  arg1 = reinterpret_cast< char * >(buf1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "analyze_umkehr" "', argument " "2"" of type '" "int""'");
+  if (!PyArg_ParseTuple(args,(char *)"O:analyze_umkehr",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "analyze_umkehr" "', argument " "1"" of type '" "int""'");
   } 
-  arg2 = static_cast< int >(val2);
-  result = (bool)analyze_umkehr((char const *)arg1,arg2);
+  arg1 = static_cast< int >(val1);
+  result = (bool)analyze_umkehr(arg1);
   resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   return resultobj;
 fail:
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   return NULL;
 }
 
@@ -8170,6 +8203,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"StringList_reverse", _wrap_StringList_reverse, METH_VARARGS, NULL},
 	 { (char *)"delete_StringList", _wrap_delete_StringList, METH_VARARGS, NULL},
 	 { (char *)"StringList_swigregister", StringList_swigregister, METH_VARARGS, NULL},
+	 { (char *)"clear_io_buffers", _wrap_clear_io_buffers, METH_VARARGS, NULL},
+	 { (char *)"write_to_input_buffer", _wrap_write_to_input_buffer, METH_VARARGS, NULL},
 	 { (char *)"set_umkehr_inputfolder", _wrap_set_umkehr_inputfolder, METH_VARARGS, NULL},
 	 { (char *)"get_output_stream", _wrap_get_output_stream, METH_VARARGS, NULL},
 	 { (char *)"get_input_stream", _wrap_get_input_stream, METH_VARARGS, NULL},
