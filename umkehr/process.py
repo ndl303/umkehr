@@ -145,7 +145,7 @@ def Level1_to_Level2(  level1inputfilename : str, level2outputfilename : str, KB
 
     lines,N14  =  _read_lines_from_input_file( level1inputfilename )              # Fetch the data lines from the
 
-    if (verbose): print('Read in {} lines from Umkehr Level 1 file {}').format(len(lines), level1inputfilename)
+    if (verbose): print('Read in {} lines from Umkehr Level 1 file {}'.format(len(lines), level1inputfilename) )
 
     umkfortran.clear_io_buffers()                                           # Clear the internal fortran/C++ internal buffers
     for l in lines:                                                         # Write the Level 1 lines to the inut buffer. This emulates Fortran Unit 12
@@ -162,7 +162,7 @@ def Level1_to_Level2(  level1inputfilename : str, level2outputfilename : str, KB
         print("Level 2 Fortran Output Records")
         for l in L4: print(l)
 
-    if (verbose): print('Writing {} lines to Umkehr Level 2 file {}').format(len(L4), level2outputfilename)
+    if (verbose): print('Writing {} lines to Umkehr Level 2 file {}'.format(len(L4), level2outputfilename))
     _write_lines_to_output_file( level2outputfilename, L4, N14)                   # Write the Level 2 records to the Umkehr Level 2 file.
 
 
