@@ -583,6 +583,7 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+UMKEHR_VERSION
 FOR_FLAGS
 CPP_FLAGS
 PYVERSION
@@ -3302,6 +3303,8 @@ fi
 
 
 
+UMKEHR_VERSION=0.2.0
+
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
   enableval=$enable_debug; case "${enableval}" in  yes) debug=true ;; no)  debug=false ;; *)   as_fn_error $? "bad value ${enableval} for --enable-debug" "$LINENO" 5 ;; esac
@@ -3337,6 +3340,7 @@ fi
 #-----------------------------------------------------------------------------
 #	Set the variables to export to the makefiles
 #-----------------------------------------------------------------------------
+
 
 
 

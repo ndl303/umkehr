@@ -14,14 +14,14 @@ class BinaryDistribution(Distribution):
 
 
 setup(
-    name                 = 'umkehr_if',
-    version              = "0.1.0",
+    name                 = 'umkehr',
+    version              = "@UMKEHR_VERSION@",
 #   version=versioneer.get_version(),
 #   cmdclass=versioneer.get_cmdclass(),
     description          = 'UMKEHR Fortran Interface Library',
     license              = 'MIT',
     author               = 'Nick Lloyd',
-    author_email         = 'nicklloyd5577@gmail.coma',
+    author_email         = 'nicklloyd5577@gmail.com',
     packages             = find_packages(),
     package_data         = {'umkehr_if': [ '_umkehr_if.@PYTHON_DLLEXT@',
                                            'data/coef_dobch.dat', 
