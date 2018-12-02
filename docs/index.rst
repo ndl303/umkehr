@@ -12,6 +12,7 @@ Welcome to umkehr's documentation!
 
    installation
    operation
+   umkehr_api
    umkehr_inputs
 
 

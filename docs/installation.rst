@@ -4,12 +4,6 @@ Installation Of Umkehr
 ======================
 
 
-Download the package from GitHub
---------------------------------
-
-Pre-requisites
---------------
-
 - g++
 - gfortran
 - swig
@@ -28,4 +22,14 @@ make install
 
 pip install umkehr_if-\*.whl
 
+
+Download the package from GitHub
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+How to download
+
+Pre-requisites
+^^^^^^^^^^^^^^
+
+A description of prerequisites
 
