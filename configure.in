@@ -1,19 +1,44 @@
-AC_INIT( sasktranif, 4.1 )
-m4_include([m4/ax_python.m4])
+AC_INIT( umkehr,0.3.0)
+
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_F77( gfortran g77 f77 g95 f90 fort77 fl32)
-AX_PYTHON
 
-UMKEHR_VERSION=0.2.0
+AC_ARG_ENABLE(manylinux,AS_HELP_STRING([--enable-manylinux],[enable manylinux, default: no]), [case "${enableval}" in  yes) manylinux=true ;; no)  manylinux=false ;; *)   AC_MSG_ERROR([bad value ${enableval} for --enable-manylinux]) ;; esac], [manylinux=false])
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],    [enable debugging, default: no]), [case "${enableval}" in  yes) debug=true     ;; no)  debug=false     ;; *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;; esac], [debug=false])
 
-AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[enable debugging, default: no]), [case "${enableval}" in  yes) debug=true ;; no)  debug=false ;; *)   AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;; esac], [debug=false])
+AC_ARG_VAR(PYVERSION, [manylinux option only. The version of python eg 3.6] )
+AC_ARG_VAR(PYBASEDIR, [manylinux option only. The location of python installation in manyliux docker, eg /opt/python/cp36-cp36m])
 
+if [test x"$manylinux" == x"true"]; then
+
+	AC_MSG_NOTICE( [For this to work in the manylinux docker,  you must use something like ./configure --enable-manylinux PYVERSION="3.6" PYBASEDIR="/opt/python/cp36-cp36m" or similar])
+	AC_MSG_NOTICE( [Configuring the manylinux versions. This will not check any installed python environment] )
+	AC_MSG_NOTICE( [manylinux target python = "$PYVERSION"])
+	AC_MSG_NOTICE( [manylinux python folder = "$PYBASEDIR"])
+	PYTHON_LIB_DIR="./"
+	PYTHON_LINK_LIB=""
+	PYTHON_INCLUDE_DIR="$PYBASEDIR"/python"$PYVERSION"/include
+	PYTHON_DLLEXT="so"
+	PYTHON_LINKLIBOPTION=""
+	AC_SUBST(PYTHON_INCLUDE_DIR)
+	AC_SUBST(PYTHON_LIB_DIR)
+	AC_SUBST(PYTHON_LINK_LIB)
+	AC_SUBST(PYTHON_DLLEXT)
+	AC_SUBST(PYVERSION)
+
+else
+	PYTHON_LINKLIBOPTION="-l"
+	m4_include([m4/ax_python.m4])
+	AX_PYTHON
+fi
+	
 #------------------------------------------------------------------------------------
 #  Setup the directories we need to build the Repos_skclimatology stuff.
 #  We ned to know the current directory, this is the source code base.
 #-------------------------------------------------------------------------------------
 
+UMKEHR_VERSION=$PACKAGE_VERSION
 sourcebase=`pwd`
 
 #-----------------------------------------------------------------------------
@@ -38,6 +63,7 @@ fi
 AC_SUBST(CPP_FLAGS)
 AC_SUBST(FOR_FLAGS)
 AC_SUBST(UMKEHR_VERSION)
+AC_SUBST(PYTHON_LINKLIBOPTION)
 
 #------------------------------------------------------------------------------
 #	Export to the makefiles

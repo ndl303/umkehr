@@ -24,3 +24,4 @@ config.status
 __pycache__
 _build
 *.pyc
+wheelhouse

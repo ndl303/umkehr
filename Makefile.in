@@ -41,24 +41,24 @@ STAND_ALONE=cimpl_emulator.o\
 #	and then copy the jpleph binary file to the location specified by the
 #	the environment variable JPLEPH.
 #
+#	The SWIG command to build the interface code is:
+#	swig -c++ -python -py3 -naturalvar umkehr_if.i
+#	g++ @CPP_FLAGS@ -I @PYTHON_INCLUDE_DIR@ -c -o umkehr_if_wrap.o ./sources/cpp-sources/umkehr_if_wrap.cxx
 #----------------------------------------------------------------------------
 
 build: $(O_DEPENDS) $(CPP_DEPENDS)
-	cd ./sources/cpp-sources; swig -c++ -python -py3 -naturalvar umkehr_if.i; cd ../../
-	mv -f ./sources/cpp-sources/umkehr_if.py ./umkehr_if/umkehr_if.py 
-	g++ @CPP_FLAGS@ -I @PYTHON_INCLUDE_DIR@ -c -o umkehr_if_wrap.o ./sources/cpp-sources/umkehr_if_wrap.cxx
-	g++ -shared -o umkehr_if/_umkehr_if.@PYTHON_DLLEXT@ umkehr_if_wrap.o $(O_DEPENDS) $(CPP_DEPENDS) -L@PYTHON_LIB_DIR@ -l@PYTHON_LINK_LIB@ -lgfortran  -lm
+	ar -rc libumkehr_codelib.a $(O_DEPENDS) $(CPP_DEPENDS)
+	cp -f ./sources/cpp-sources/umkehr_if.py ./umkehr_if/umkehr_if.py 
 	rm -f *.o
-	@echo "Build of umkehr_if python interface complete."
+	@echo "Build of umkehr_if code library complete."
 	@echo "*** SUCCESS ***"
 
 install:
-	if test -d ./dist; then rm -r dist; fi  
-	python3 setup.py bdist_wheel
-	mv ./dist/*.whl ./
-	if test -d ./umkehr_if.egg-info; then rm -r umkehr_if.egg-info; fi
-	if test -d ./dist; then rm -r dist; fi
-	if test -d ./build; then rm -r build; fi
+	@PYBASEDIR@/bin/pip wheel ./ -w wheelhouse
+	for whl in wheelhouse/*.whl;\
+	do \
+	auditwheel repair "$$whl" -w wheelhouse/; \
+	done 
 	@echo " "
 	@echo "__        ___                   _   _             _ "
 	@echo "\ \      / / |__   ___   ___   | | | | ___   ___ | | "
@@ -81,10 +81,10 @@ install:
 	@echo " -------------------------------------------------------------- "
 	@echo " "
 	@echo "Please install the package into python @PYVERSION@ with either:"
-	@echo "1) pip install --upgrade  <wheelname>"
-	@echo "2) pip3 install --upgrade <wheelname>"
+	@echo "1) pip install --upgrade  wheelhouse/<wheelname>"
+	@echo "2) pip3 install --upgrade wheelhouse/<wheelname>"
 	@echo "where wheel name is:-"
-	@ls *.whl
+	@ls wheelhouse/*.whl
 	@echo "Thank-you"
 	
 
@@ -101,7 +101,7 @@ standalone: $(O_DEPENDS) $(STAND_ALONE)
 #----------------------------------------------------------------------------
 
 clean:
-	rm -f ._umkehr_if.@PYTHON_DLLEXT@
+	rm -f libumkehr_codelib.a
 	rm -f *.o
 
 

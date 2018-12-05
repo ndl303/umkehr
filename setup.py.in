@@ -5,13 +5,16 @@ from setuptools import find_packages
 from setuptools.dist import Distribution
 from distutils.core import Extension
 
-class BinaryDistribution(Distribution):
-    def is_pure(self):
-        return False
 
-    def has_ext_modules(self):
-        return True
-
+extension_module = Extension(
+     name              = 'umkehr_if._umkehr_if',
+     sources           =['sources/cpp-sources/umkehr_if_wrap.cxx'],
+     include_dirs      =['/usr/include'],
+     library_dirs      =['./'],
+     libraries         =['umkehr_codelib', 'gfortran'],
+     extra_compile_args=['-std=c++11', '-fvisibility=hidden','-fPIC'],
+     extra_link_args   =[]
+)
 
 setup(
     name                 = 'umkehr',
@@ -23,7 +26,7 @@ setup(
     author               = 'Nick Lloyd',
     author_email         = 'nicklloyd5577@gmail.com',
     packages             = find_packages(),
-    package_data         = {'umkehr_if': [ '_umkehr_if.@PYTHON_DLLEXT@',
+    package_data         = {'umkehr_if': [ 
                                            'data/coef_dobch.dat', 
                                            'data/coef_dobcl.dat',
                                            'data/decodev4.inp',
@@ -37,11 +40,12 @@ setup(
                                            'data/std_pfl.asc',
                                            'data/stnindex.dat',
                                            'data/totoz_press.dat'],
-                             'woudc_umkcsv': ['table_configuration.csv']
+                             'woudc_umkcsv': ['table_configuration.csv'],
+                             'umkehr': ['examples/20091101.Dobson.Beck.119.JMA.csv']
                            },
     install_requires     = [],
+    ext_modules          = [extension_module],
     include_package_data = True,
-    distclass            = BinaryDistribution,
     classifiers          = ['Development Status :: 4 - Beta',                   # How mature is this project? Common values are
                                                                                 #   3 - Alpha
                                                                                 #   4 - Beta

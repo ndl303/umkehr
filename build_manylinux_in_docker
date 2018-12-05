@@ -1,0 +1,9 @@
+./configure --enable-manylinux PYVERSION=3.6 PYBASEDIR=/opt/python/cp36-cp36m
+make clean
+make
+make install
+./configure --enable-manylinux PYVERSION=3.7 PYBASEDIR=/opt/python/cp37-cp37m
+make clean
+make
+make install
+
