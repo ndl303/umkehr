@@ -25,3 +25,4 @@ __pycache__
 _build
 *.pyc
 wheelhouse
+/libumkehr_codelib.a

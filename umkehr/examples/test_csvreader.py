@@ -1,7 +1,7 @@
 from typing import List,Tuple
 from ..umkehr_csv_io import read_level1_umkehr_fortran_lines_from_csv, write_level2_umkehr_fortran_lines_to_csv
 
-def test_csvreader()
+def test_csvreader():
 
     lines,N14 = read_level1_umkehr_fortran_lines_from_csv('20091101.Dobson.Beck.119.JMA.csv')
 

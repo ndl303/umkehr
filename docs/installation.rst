@@ -4,64 +4,30 @@ Installation
 ============
 
 The **umkehr** python package is installed as a binary Python wheel. The binary wheel can either be downloaded as a
-pre-built binary python wheel (not yet available) or can be built from source code. The python package is not available
-for python versions prior to 3.6 as we make extensive use of the *typing* features introduced in that version.
+pre-built binary python wheel (64 bit Linux only) from the USASK-ARG website or can be built from source code. The umkehr python package is
+not available for python versions prior to 3.6 as we make extensive use of the *typing* features introduced in that version.
 
 Install The Python Wheel
 ------------------------
 
-The python wheel file is a file that looks similar to ``umkehr-0.1.0-cp36-cp36m-linux.whl``. You will either download this file (not yet available)
-or you will build it on your system, see below. The python package is installed into your python distribution using::
+Most users will choose to install the package on their 64 bit Linux systems using out pre-built ``manylinux`` version.  Wheels for Python 3.6 and 3.7
+can be installed from the USASK-ARG server using::
 
-    pip install <wheel-name>
+    pip install umkehr -f https:\\arg.usask.ca\wheels
 
-where ``<wheel-name>`` is the name of the wheel file that you have. You can uninstall the python package using ``pip uninstall umkehr``.
-
-Build the Python Wheel
-----------------------
-
-The **umkehr** python wheel can be built from source using standard linux compiler tools,
-
-- g++
-- gfortran
-- swig
-- python3
-
-We recommend the `Anaconda <https://www.anaconda.com/download/>`_ distribution for python but this is not a critcal option.
-The code can be built in a virtual environment. The command ``python3`` must run the actual version of ``python`` that will be used to build
-the wheel as the build scripts run ``python3`` to find the location of python include header files and python link libraries. Note that you must use
-python 3.6 or higher.
-
-If any of these tools are not installed on your system then they can usually be installed with package managers supplied with
-the operating system, e.g::
-
-    sudo apt-get install gfortran
-    sudo apt-get install swig
-
-The source code for the ``umkehr`` python package can be retrieved from a git repository using::
-
-    git clone git@arggit.usask.ca:Nick/umkehr.git
-
-
-The process to build the wheel is a classic, 3 step system. The following commands should be entered::
-
-    ./configure
-    make
-    make install
-
-The build process is successful if you see a big *whoo-hoo, the python wheel is built* scroll down your screen at the end of the last step.
-The wheel will be in your current folder and a file listing, ``ls -al``, should reveal the wheel. It will look something like ``umkehr-0.1.0-cp36-cp36m-linux.whl``.
-This wheel can be installed into your version of Python, see above.
+After the wheel is installed you are ready to go.  We recommend running the installation test.
 
 Tests
 -----
 
-You can test your ``umkehr`` installation. Go to the ``umkehr`` directory and ``cd`` into ``examples`` and run the command::
+You can test your ``umkehr`` installation. A test example is installed as part of the python package::
 
-    python test_umkehr.py
+    python
+    >>> from umkehr.examples.test_umkehr import test_Level1_to_Level2
+    >>> test_Level_to_Level2()
 
-The test takes about 20 seconds and processes some data from SYOWA in November 2009. It Reads the data in from the Level 1 CSV file in the examples
-folder and writes out a Level 2 CSV file. The screen out is below::
+The test takes about 20 seconds and processes a month of data from SYOWA in November 2009. It reads the data in from a Level 1 CSV file
+and writes out a Level 2 CSV file. The screen output is shown below::
 
     Read in 60 lines from Umkehr Level 1 file 20091101.Dobson.Beck.119.JMA.csv
     03119 061109 1109276  -1  -1 317 524 577 681 819 857 845 820 761 676 609 534 101
@@ -170,6 +136,68 @@ folder and writes out a Level 2 CSV file. The screen out is below::
     (umkehr) ndl303@lloyd:~/umkehr/umkehr/examples$
 
 
+Installing your own wheel
+-------------------------
+
+The python wheel file is a file that looks similar to ``umkehr-0.3.0-cp37-cp37m-manylinux1_x86_64.whl``. If you have this file on
+you local machine, because you either built it or downloaded it then you can install it into your python distribution using::
+
+    pip install <wheel-name>
+
+where ``<wheel-name>`` is the name of the wheel file that you have. You can uninstall the python package using::
+
+    pip uninstall umkehr
+
+
+
+Build the Python Wheel on a Linux platform
+------------------------------------------
+
+The **umkehr** python wheel can be built from source using standard linux compiler tools,
+
+- g++
+- gfortran
+- swig
+- python3
+
+We recommend the `Anaconda <https://www.anaconda.com/download/>`_ distribution for python but this is not a critcal option.
+The code can be built in a virtual environment. The command ``python3`` must run the actual version of ``python`` that will be used to build
+the wheel as the build scripts run ``python3`` to find the location of python include header files and python link libraries. Note that you must use
+python 3.6 or higher.
+
+If any of these tools are not installed on your system then they can usually be installed with package managers supplied with
+the operating system, e.g::
+
+    sudo apt-get install gfortran
+    sudo apt-get install swig
+
+The source code for the ``umkehr`` python package can be retrieved from a git repository using::
+
+    git clone git@arggit.usask.ca:Nick/umkehr.git
+
+The process to build the wheel is a 2 step system. The following commands should be entered::
+
+    ./configure
+    make
+
+The build process is successful if you see a big *whoo-hoo, the python wheel is built* scroll down your screen at the end of the last step.
+The wheel will be in sub-directory ./wheelhouse. A file listing, ``ls -al ./wheelhouse``, should reveal the wheel. It will look something like ``umkehr-0.3.0-cp37-cp37m-linux_x86_64.whl``.
+This wheel can be installed into your version of Python, see above.
+
+Building the manylinux version
+------------------------------
+
+The manylinux wheel is built using a special  `docker <https://docs.docker.com/>`_ image built by the Python
+`manylinux <https://github.com/pypa/manylinux>`_ project specifically for building manylinux wheels. You must
+then run the docker image and use the special umkehr build script provided::
+
+    C:> docker run  -v C:\Users\nickl\Documents\Work\software\ARG_Packages:/packages -i -t 41c74197534c /bin/bash
+    > cd /packages/umkehr
+    > ./build_manylinux_in_docker
+
+At the time of writing (2018-12-05) this built Python 3.6 and 3.7 wheels.
+
+
 Building the Sphinx Documentation
 ---------------------------------
 
@@ -187,9 +215,10 @@ but failed during ruintime with the error::
 
     Internal Error:get_unit() Bad internal unit KIND
 
+
 Apparently this is a not uncommon problem due to ``gfortran``/``gcc`` incompatibilities. A simple solution which works well is to create
 a virtual environment using the Anaconda ``conda`` command, install a trustworthy version of ``gcc`` and ``gfortran`` and
-activate the environment. For example, we create a ``conda`` environment called ``umkehr`` based upon python 3.6::
+activate the environment before building the wheel. For example, we create a ``conda`` environment called ``umkehr`` based upon python 3.6::
 
     conda create -n umkehr python=3.6
     conda install gcc

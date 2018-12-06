@@ -51,14 +51,7 @@ build: $(O_DEPENDS) $(CPP_DEPENDS)
 	cp -f ./sources/cpp-sources/umkehr_if.py ./umkehr_if/umkehr_if.py 
 	rm -f *.o
 	@echo "Build of umkehr_if code library complete."
-	@echo "*** SUCCESS ***"
-
-install:
 	@PYBASEDIR@/bin/pip wheel ./ -w wheelhouse
-	for whl in wheelhouse/*.whl;\
-	do \
-	auditwheel repair "$$whl" -w wheelhouse/; \
-	done 
 	@echo " "
 	@echo "__        ___                   _   _             _ "
 	@echo "\ \      / / |__   ___   ___   | | | | ___   ___ | | "

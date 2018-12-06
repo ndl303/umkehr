@@ -1,9 +1,38 @@
+# 2018-12-05 Nick Lloyd
+# ---------------------
+# Builds the manylinux wheels python version of umkehr
+# Development of the docker image used to build the manylinux wheels is at https://github.com/pypa/manylinux
+# The docker image itself is downloaded from quay.io/pypa/manylinux1_x86_64 
+# A demo of the manylinux build system is at https://github.com/pypa/python-manylinux-demo
+#
+# Here is how I run the docker image on my windows system.
+# I share the umkehr development folder with the docker image.
+#
+# docker run  -v C:\Users\nickl\Documents\Work\software\ARG_Packages:/packages -i -t 41c74197534c /bin/bash
+# cd /packages/umnkehr
+# ./build_manylinux_in_docker
+#----------------------------------------------------------------------------------------------------------
+
 ./configure --enable-manylinux PYVERSION=3.6 PYBASEDIR=/opt/python/cp36-cp36m
 make clean
 make
-make install
+
 ./configure --enable-manylinux PYVERSION=3.7 PYBASEDIR=/opt/python/cp37-cp37m
 make clean
 make
-make install
+
+for whl in wheelhouse/*.whl
+do
+  auditwheel repair "$whl" -w wheelhouse/
+done
+rm -f ./wheelhouse/umkehr*-cp36-cp36m-linux_*.whl
+rm -f ./wheelhouse/umkehr*-cp37-cp37m-linux_*.whl
+echo " "
+echo "-------------------------------------------------------------------------------------------"
+echo "| The umkehr manylinux wheels for python 3.6 and python 3.7 64 bit are built and are in "
+echo "| folder:"
+echo "| ./wheelhouse"
+echo "-------------------------------------------------------------------------------------------"
+echo " "
+ls -al ./wheelhouse/*.whl
 
