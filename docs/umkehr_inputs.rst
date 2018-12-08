@@ -1,291 +1,998 @@
 ..  _umkehr_inputs:
 
-Inputs
-======
+Fortran Input and Output
+=========================
+The UMKEHR and DECODE Fortran algorithms have been modified so some of the I/O data streams are now sent to or read
+from internal buffers that can be accessed by the Python code.  Other data streams are un-modified except that the
+files are installed as part of the Python package installation. The Fortran code is modified so it is aware that files
+are located in another location on the system.
 
-Units
+The directory where input files are located on your system can be found from within Python::
 
-Unit       File
-----      -----
+    import os
+    import os.path
+    import umkehr_if
 
-4         Output   umout, O3 profile                    Fortran writes to python buffer
-5         Input    mk2v4cum.inp                         default in python package
-6         Output   Umkehr retrieval statistics          Fortran writes to python buffer.
-8         Input    stdmscdobc_depol_top5.dat            static
-9         Input    fstguess.dat                         default in python package
-10        Output   output from DECODE                   Fortran writes to python buffer
-10        Input    input to UMKEHR                      reads from python buffer
-11        Input    phprofil.dat                         default in python package
-13        Input    refractn.dat                         default in python package
-18        Input    std_pfl.asc                          default in python package
-19        Input    stdjacmsc.dat                        default in python package
-14        Output   uprint, Averaging Kernels            Fortran writes to python buffer
-15        Input    nrl.dat                              default in python package
-21        Output                                        Fortran writes to python buffer
-22        Output                                        Fortran writes to python buffer
-25        Output                                        Fortran writes to python buffer
-31        Output                                        Fortran writes to python buffer
+    print( os.dirname( umkehr_if.__file__) + os.sep + 'data')
+
+
++------+--------+------------------------------------+-----------------------------------+
+| Unit |  I/O   | Description                        |                                   |
++======+========+====================================+===================================+
+| 4    | Output | :ref:`umkehroutput`                | Fortran writes to python buffer   |
+|      |        |                                    |                                   |
++------+--------+------------------------------------+-----------------------------------+
+| 5    | Input  | :ref:`mk2v4cum.inp`                | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 6    | Output | :ref:`umkehrnucumout`              | Fortran writes to python buffer.  |
+|      |        |                                    |                                   |
++------+--------+------------------------------------+-----------------------------------+
+| 8    | Input  | :ref:`stdmscdobc_depol_top5.dat`   | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 9    | Input  | :ref:`fstguess.dat`                | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 10   | Output | :ref:`decodeoutput`                | Fortran writes to python buffer   |
+|      |        |                                    | during DECODE                     |
++------+--------+------------------------------------+-----------------------------------+
+| 10   | Input  | :ref:`umkehrinput`                 | Fortran reads from python buffer  |
+|      |        |                                    | during UMKEHR                     |
++------+--------+------------------------------------+-----------------------------------+
+| 11   | Input  | :ref:`phprofile.dat`               | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 13   | Input  | :ref:`refractn.dat`                | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 14   | Output | :ref:`uprint`                      | Fortran writes to python buffer   |
+|      |        |                                    |                                   |
++------+--------+------------------------------------+-----------------------------------+
+| 15   | Input  | :ref:`nrl.dat`                     | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 18   | Input  | :ref:`std_pfl.asc`                 | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 19   | Input  | :ref:`stdjacmsc.dat`               | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 21   | Output | :ref:`unit21_output`               | Fortran writes to python buffer   |
+|      |        |                                    |                                   |
++------+--------+------------------------------------+-----------------------------------+
+| 22   | Output | :ref:`unit22_output`               | Fortran writes to python buffer   |
+|      |        |                                    |                                   |
++------+--------+------------------------------------+-----------------------------------+
+| 25   | Output | :ref:`unit25_output`               | Fortran writes to python buffer   |
+|      |        |                                    |                                   |
++------+--------+------------------------------------+-----------------------------------+
+| 31   | Output | :ref:`unit31_output`               | Fortran writes to python buffer   |
+|      |        |                                    |                                   |
++------+--------+------------------------------------+-----------------------------------+
+| 79   | Input  | :ref:`totoz_press.dat`             | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 97   | Input  | :ref:`coef_dobch.dat`              | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+| 98   | Input  | :ref:`coef_dobcl.dat`              | No change, default file is        |
+|      |        |                                    | installed in the python package   |
++------+--------+------------------------------------+-----------------------------------+
+
+..  _umkehrinput:
+
+Input to UMKEHR
+---------------
+This is the primary input stream to the UMKEHR algorithm. The file is generated internally by python on *Unit 4* by
+decoding a standard Level 1 UMKEHR file. The file was read in the fortran UMKEHR algorithm with::
+
+      190 READ (10,5010,IOSTAT=IOS) ISN,STATN,ALAT,PNOT,HGT
+     ...
+          READ (10,5600,END=900) (ID(I),I=3,6),LAM,KB,KE,ID(7),IOMEGA,(VNOB(K),K=1,12),ISTN
+
+     5010 FORMAT (I4,1X,A18,1X,F8.2,2F6.0)
+     5600 FORMAT (3I2,A1,I1,2I2,A2,I4,2F4.1,10F5.1,I3)
+
+Example of stream contents::
+
+     101 SYOWA                -69.00 1003.   83.
+     611 913 31209 276  -1  -1  580  702  823  973 1143 1225 1253 1238 1207 1166101
+     611 923 11200 261 393 461  558  668  772  910 1069 1169 1212 1214 1189 1147101
+     711 913 11200 295 437 516  611  723  835  966 1119 1208 1240 1227 1196 1149101
+     711 923 11209 332 482 587  718  859  992 1150 1298 1355 1356 1322 1279 1233101
+    1111 913 11200 374 556 645  769  910 1043 1191 1314 1347 1341 1300 1261 1212101
+    1211 923 11200 377 580 679  817  965 1107 1254 1363 1390 1380 1345 1309 1262101
+    1411 913 11209 383 582 683  828  980 1116 1254 1356 1382 1372 1332 1297 1253101
+    1511 913 11200 373 574 666  806  954 1089 1236 1348 1377 1365 1327 1288 1243101
+    1511 923 11200 384 586 681  826  982 1124 1270 1381 1404 1391 1350 1312 1263101
+    1611 913 11200 377 586 681  822  969 1109 1254 1361 1385 1371 1334 1296 1252101
+    1611 923 11200 391 607 703  850 1001 1140 1276 1378 1400 1385 1346 1304 1257101
+    1711 923 51209 381  -1  -1   -1   -1 1128 1272 1377 1400 1383 1345 1306 1261101
+    1811 913 11200 379 585 688  827  976 1111 1251 1357 1380 1369 1332 1296 1255101
+    1811 923 11200 379 585 685  826  976 1112 1254 1364 1388 1378 1339 1306 1255101
+    1911 913 11200 341 528 614  735  879 1024 1187 1318 1356 1347 1311 1276 1235101
+    1911 923 11200 353 536 623  755  909 1051 1210 1336 1370 1359 1324 1287 1241101
+    2711 913 11100 338 501 602  729  873 1003 1153 1280 1317 1311 1276 1246   -1101
+    2711 923 11100 312 462 550  668  800  929 1080 1231 1285 1290 1256 1223   -1101
+    2811 913 41104 352  -1  -1   -1  861  989 1132 1257 1296 1289 1259 1223   -1101
+    3011 923 11100 307 458 543  659  790  914 1059 1198 1250 1252 1220 1182   -1101
+
+..  _umkehroutput:
+
+Output from UMKEHR (UMOUT)
+--------------------------
+This is the output from the UMKEHR algorithm. The data are captured by the Python interface and are subsequently
+encoded into the destination output format, e.g. WOUDC extended CSV. The original FORTRAN code used to write the stream::
+
+          WRITE (4,4000) (ID(I),I=3,6),LAM,(IOUT(I),I=1,13), IOUT(I),I=15,19),ISN
+     4000 FORMAT (3(I3),1X,A1,I2,I5,I6,10(I6),I2,I2,I3,2(I4),I5,I4)
+
+Typical file output::
+
+      6 11  9 1 3  276  2742   121   247   784  2010  4126  5913  5341  3582  2804  2491 2 3 10   5  11   34 101
+      6 11  9 2 3  261  2570   113   214   670  1883  3869  4719  4097  3508  3426  3202 2 3 10   8   7   44 101
+      7 11  9 1 3  295  2892   108   194   606  1885  4067  4738  4381  4414  4533  3994 3 3 10   0   1   63 101
+      7 11  9 2 3  332  3300   122   251   817  2163  4559  6948  6916  4810  3593  2818 2 3 10   8  48   28 101
+     11 11  9 1 3  374  3702   116   227   725  1959  4229  6924  7984  6285  4935  3639 3 3 10   0   1   37 101
+     12 11  9 2 3  377  3753   123   257   818  1949  3924  7540  9164  6394  4378  2985 2 3 10   7  63   20 101
+     14 11  9 1 3  383  3815   119   242   764  1850  3752  7350  9444  6834  4701  3090 3 3 10   0   1   18 101
+     15 11  9 1 3  373  3709   118   237   749  1874  3970  7405  8841  6323  4481  3096 3 3 10   0   1   18 101
+     15 11  9 2 3  384  3828   123   259   836  2036  4176  7960  9409  6376  4263  2841 2 3 10  10  82   15 101
+     16 11  9 1 3  377  3752   119   240   756  1833  3858  7604  9220  6432  4436  3016 3 3 10   0   1   21 101
+     16 11  9 2 3  391  3890   116   231   735  1861  3902  7495  9516  6954  4868  3224 3 3 10   0   1   18 101
+     17 11  9 2 3  381  3803   121   250   797  1905  3937  7983  9688  6452  4183  2709 3 5  8   1   6   19 101
+     18 11  9 1 3  379  3771   118   238   750  1804  3692  7341  9312  6700  4656  3101 3 3 10   0   1   17 101
+     18 11  9 2 3  379  3771   118   239   764  1890  3864  7390  9172  6587  4600  3086 3 3 10   0   1   16 101
+     19 11  9 1 3  341  3405   126   268   858  2017  4237  8002  8292  4929  3099  2220 3 3 10   1  10   50 101
+     19 11  9 2 3  353  3530   127   274   890  2095  4257  8105  8769  5305  3268  2206 3 3 10   1  12   33 101
+     27 11  9 1 3  338  3295   113   221   697  1727  3705  7278  8258  5265  3384  2297 3 3  9   0   1   37 101
+     27 11  9 2 3  312  2965   110   206   650  1749  3994  6947  6836  4188  2827  2149 3 3  9   0   1   56 101
+     28 11  9 1 3  352  3303   111   210   656  1654  3553  6866  8132  5557  3754  2535 3 4  8   0   4   78 101
+     30 11  9 2 3  307  2948   105   188   567  1518  3622  6708  7054  4496  3025  2198 3 3  9   0   5   41 101
+
+..  _decodeoutput:
+
+Output from DECODE
+------------------
+The output from DECODE is identical to the :ref:`umkehrinput`. The python code captures the output from the DECODE
+subroutine and configures it as the inpout the UMKEHR algorithm.
+
+..  _umkehrnucumout:
+
+UMKEHR nucumout Statistics
+--------------------------
+This file is now captured as a stream which is accessible to the Python code but is usually discarded. It seems to
+capture various statistics and output as the algorithm goes about its business. A typical output example is::
+
+     101 SYOWA                -69.00 1003.   83.
+    0     SOLUTION STATISTICS FOR    20 PROFILES
+     TOTAL OZONE   OBSERVED= 348.3 +/-    0.0     SOLUTION= 343.7 +/-    0.0
+     AVERAGE RESIDUAL= 0.33 +/-  0.17          TOTAL ITERATIONS=  55
+     LAYER     61     60     59     58     57     56     55     54     53     52     51     50     49     48     47     46     45     44     43     42     41     40     39     38     37     36     35     34     33     32     31     30     29     28     27     26     25     24     23     22     21     20     19     18     17     16     15     14     13     12     11     10      9      8      7      6      5      4      3      2      1
+     AVE DU     0.12E-05  0.50E-06  0.72E-06  0.10E-05  0.15E-05  0.21E-05  0.31E-05  0.44E-05  0.63E-05  0.89E-05  0.13E-04  0.18E-04  0.27E-04  0.40E-04  0.58E-04  0.80E-04  0.11E-03  0.14E-03  0.17E-03  0.22E-03  0.28E-03  0.36E-03  0.48E-03  0.64E-03  0.86E-03  0.12E-02  0.16E-02  0.21E-02  0.27E-02  0.33E-02  0.42E-02  0.51E-02  0.62E-02  0.75E-02  0.89E-02  0.11E-01  0.13E-01  0.15E-01  0.17E-01  0.19E-01  0.20E-01  0.21E-01  0.21E-01  0.20E-01  0.18E-01  0.16E-01  0.14E-01  0.13E-01  0.12E-01  0.11E-01  0.11E-01  0.95E-02  0.79E-02  0.60E-02  0.43E-02  0.32E-02  0.25E-02  0.23E-02  0.26E-02  0.32E-02  0.43E-02
+     DEV DU  0.36E-08  0.86E-09  0.18E-08  0.36E-08  0.68E-08  0.12E-07  0.22E-07  0.37E-07  0.64E-07  0.11E-06  0.18E-06  0.31E-06  0.54E-06  0.93E-06  0.16E-05  0.26E-05  0.41E-05  0.62E-05  0.91E-05  0.13E-04  0.20E-04  0.29E-04  0.43E-04  0.64E-04  0.92E-04  0.13E-03  0.18E-03  0.23E-03  0.28E-03  0.32E-03  0.35E-03  0.39E-03  0.47E-03  0.57E-03  0.64E-03  0.66E-03  0.75E-03  0.12E-02  0.19E-02  0.28E-02  0.36E-02  0.41E-02  0.44E-02  0.43E-02  0.39E-02  0.34E-02  0.29E-02  0.25E-02  0.22E-02  0.21E-02  0.19E-02  0.17E-02  0.14E-02  0.10E-02  0.74E-03  0.53E-03  0.42E-03  0.41E-03  0.48E-03  0.62E-03  0.79E-03
+     ERROR   0.4E-04   0.2E-04   0.2E-04   0.3E-04   0.5E-04   0.7E-04   0.1E-03   0.1E-03   0.2E-03   0.3E-03   0.4E-03   0.6E-03   0.8E-03   0.1E-02   0.2E-02   0.2E-02   0.3E-02   0.4E-02   0.5E-02   0.6E-02   0.8E-02   0.1E-01   0.1E-01   0.2E-01   0.2E-01   0.3E-01   0.3E-01   0.4E-01   0.5E-01   0.6E-01   0.7E-01   0.9E-01   0.1E+00   0.1E+00   0.1E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.3E+00   0.3E+00   0.3E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.1E+00   0.1E+00   0.1E+00   0.9E-01   0.7E-01   0.6E-01   0.5E-01   0.5E-01   0.5E-01   0.7E-01   0.1E+00
+     VARED -0.393E+14-0.146E+15-0.522E+14-0.214E+14-0.884E+13-0.352E+13-0.102E+13-0.237E+12-0.643E+11-0.105E+12 0.100E+01 0.100E+01-0.117E+08-0.159E+09-0.703E+09-0.207E+09-0.901E+03-0.580E+05-0.115E+07-0.453E+07-0.420E+06 0.100E+01-0.327E+06 0.784E+07-0.809E+06-0.141E+06 0.374E+05-0.382E+06-0.623E+07-0.467E+08 0.100E+01-0.216E+03 0.127E+02 0.341E+03-0.230E+02-0.170E+02 0.763E+01 0.100E+01-0.580E+08-0.433E+08-0.456E+07 0.100E+01 0.100E+01-0.888E+06 0.118E+07-0.319E+03-0.584E+04-0.666E+04-0.412E+03 0.133E+05-0.365E+03-0.910E+04 0.100E+01 0.307E+06 0.100E+01 0.100E+01-0.649E+06-0.962E+06-0.542E+06-0.323E+06-0.197E+06
+      ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
+
+.. _uprint:
+
+UMKEHR Averaging Kernels
+-------------------------
+This file, sometimes referred to as *uprint*, contains the UMKEHR Averaging kernels::
+
+         WRITE (14,4010) OMOBS*1000,ALFAC,(ALFBAR(L),L=1,2),SUMSOL*1000, ITER, RMSRES,DFRMS,FEPS
+         WRITE (14,6400) (FRES(I),I=KB,KE)
+         WRITE (14,6600) (TDXN(I)*1000.,I=6,15)
+         WRITE(14,*)'8-LAYER AVERAGING KERNEL'
+         do k=1,8
+         WRITE (14,6661) (AVK8(K,I),I=1,8)
+         end do
+
+    4010 FORMAT (1H ,7HNU TOZ=,F5.1,3X,6HALFAS=,3F7.4,3X,8HSOL TOZ=,F5.1,3X,5HITER=,I1,3X,4HRES=,F4.2,3X,3HDF=,F5.3,3X,3HDN=,F4.2)
+    6400 FORMAT (11H FINAL NRES,3X,12F6.1)
+    6600 FORMAT (19HSOLUTION PROF (DU) ,10F7.2)
+    6661 FORMAT (8F8.3)
+
+Typical output::
+
+         LATITUDE=  -69.00     SFC PRESSURE= 0.990 ATM     STN HEIGHT=   83. M     STD TEMP PROFILE
+     ********SYOWA                DATE  6 11  9   L= 3  T=1  KB=3  KE=12  LS=09  OBS TOZ=276.0**********
+     INITL NVAL     58.0  70.2  82.3  97.3 114.3 122.5 125.3 123.8 120.7 116.6
+    A PRIORI PROF (DU)    1.20   2.45   7.69  19.09  37.10  54.20  52.00  34.08  24.32  20.26
+     INITL NRES     -4.4  -4.4  -4.2  -3.7  -2.6  -3.4  -4.6  -6.4  -7.5  -7.8
+     NU TOZ=276.0   ALFAS= 1.9194 2.0119 0.0925   SOL TOZ=274.2   ITER=2   RES=0.34   DF=0.005   DN=0.11
+     FINAL NRES      5.4   5.8   5.9   5.7   4.9   5.3   5.4   5.7   5.6   4.8
+    SOLUTION PROF (DU)    1.21   2.47   7.84  20.10  41.26  59.13  53.41  35.82  28.04  24.91
+     8-LAYER AVERAGING KERNEL
+       0.317   0.222   0.054  -0.013  -0.006   0.003   0.002  -0.008
+       0.593   0.433   0.140  -0.003  -0.007   0.003   0.002  -0.015
+       0.626   0.563   0.393   0.151   0.026  -0.006  -0.018  -0.020
+      -0.351  -0.018   0.515   0.503   0.217   0.043  -0.065  -0.041
+      -0.570  -0.351   0.109   0.473   0.450   0.280   0.041  -0.099
+       0.090  -0.034  -0.185   0.047   0.317   0.388   0.289   0.017
+       0.376   0.169  -0.196  -0.198   0.133   0.395   0.531   0.303
+       0.045   0.016  -0.041  -0.050   0.019   0.095   0.165   0.157
+     ********SYOWA                DATE  6 11  9   L= 3  T=2  KB=3  KE=12  LS=00  OBS TOZ=261.0**********
+     INITL NVAL     55.8  66.8  77.2  91.0 106.9 116.9 121.2 121.4 118.9 114.7
+    A PRIORI PROF (DU)    1.20   2.45   7.69  19.09  37.10  54.20  52.00  34.08  24.32  20.26
+     INITL NRES     -3.2  -3.9  -4.9  -5.3  -5.5  -5.2  -5.6  -6.5  -7.3  -7.9
+     NU TOZ=261.0   ALFAS= 1.9204 2.0130 0.0926   SOL TOZ=257.0   ITER=2   RES=0.44   DF=0.008   DN=0.07
+     FINAL NRES      3.1   3.4   4.0   3.6   3.1   2.5   2.9   3.4   3.6   3.3
+    SOLUTION PROF (DU)    1.13   2.14   6.70  18.83  38.69  47.19  40.97  35.08  34.26  32.02
+     8-LAYER AVERAGING KERNEL
+       0.293   0.222   0.058  -0.012  -0.007   0.002   0.003  -0.008
+       0.567   0.440   0.144  -0.003  -0.008   0.003   0.002  -0.014
+       0.657   0.582   0.386   0.145   0.028  -0.006  -0.018  -0.018
+      -0.246  -0.012   0.498   0.490   0.227   0.044  -0.071  -0.030
+      -0.580  -0.375   0.108   0.472   0.461   0.291   0.021  -0.091
+       0.048  -0.027  -0.180   0.046   0.313   0.401   0.285   0.003
+       0.346   0.185  -0.172  -0.191   0.106   0.389   0.555   0.289
+       0.040   0.016  -0.035  -0.046   0.014   0.090   0.172   0.154
+     ********SYOWA                DATE  7 11  9   L= 3  T=1  KB=3  KE=12  LS=00  OBS TOZ=295.0**********
+     INITL NVAL     61.7  72.8  83.5  96.6 111.9 120.8 124.0 122.7 119.6 114.9
+    A PRIORI PROF (DU)    1.20   2.44   7.66  19.07  37.08  54.31  52.13  34.11  24.33  20.21
+     INITL NRES     -5.0  -6.7  -8.3  -9.9 -10.0  -9.1  -9.1 -10.1 -10.9 -11.7
+     NU TOZ=295.0   ALFAS= 1.9182 2.0105 0.0923   SOL TOZ=288.6   ITER=2   RES=0.71   DF=0.030   DN=0.14
+     FINAL NRES      3.9   4.5   4.9   4.9   3.8   3.0   3.4   4.4   4.6   4.3
+    SOLUTION PROF (DU)    1.06   1.86   5.72  18.33  40.76  46.68  41.91  43.83  46.67  41.76
+     8-LAYER AVERAGING KERNEL
+       0.281   0.227   0.058  -0.013  -0.006   0.003   0.002  -0.007
+       0.555   0.454   0.143  -0.006  -0.008   0.004   0.001  -0.014
+       0.657   0.583   0.389   0.143   0.028  -0.007  -0.018  -0.017
+      -0.220  -0.056   0.496   0.498   0.230   0.039  -0.072  -0.027
+      -0.551  -0.375   0.092   0.473   0.470   0.294   0.013  -0.092
+       0.047   0.011  -0.187   0.034   0.315   0.413   0.278   0.001
+       0.303   0.189  -0.161  -0.192   0.099   0.393   0.552   0.300
+       0.032   0.013  -0.032  -0.044   0.011   0.089   0.172   0.157
+     ********SYOWA                DATE  7 11  9   L= 3  T=2  KB=3  KE=12  LS=09  OBS TOZ=332.0**********
+     INITL NVAL     71.8  85.9  99.2 115.0 129.8 135.5 135.6 132.2 127.9 123.3
+    A PRIORI PROF (DU)    1.20   2.44   7.66  19.07  37.08  54.31  52.13  34.11  24.33  20.21
+     INITL NRES     -3.1  -2.8  -2.5  -1.5  -0.9  -1.5  -3.2  -5.3  -7.0  -7.4
+     NU TOZ=332.0   ALFAS= 1.9163 2.0083 0.0920   SOL TOZ=330.0   ITER=2   RES=0.28   DF=0.008   DN=0.48
+     FINAL NRES      4.3   4.5   4.8   4.5   4.2   4.1   4.3   4.5   4.7   3.8
+    SOLUTION PROF (DU)    1.22   2.51   8.17  21.63  45.59  69.48  69.16  48.10  35.93  28.18
+     8-LAYER AVERAGING KERNEL
+       0.336   0.227   0.048  -0.015  -0.004   0.003   0.002  -0.008
+       0.616   0.437   0.132  -0.004  -0.005   0.004   0.000  -0.015
+       0.588   0.541   0.400   0.155   0.026  -0.006  -0.020  -0.021
+      -0.432  -0.053   0.530   0.514   0.215   0.039  -0.062  -0.047
+      -0.531  -0.330   0.095   0.472   0.452   0.277   0.046  -0.107
+       0.133  -0.016  -0.201   0.041   0.322   0.388   0.284   0.029
+       0.350   0.146  -0.207  -0.198   0.143   0.398   0.512   0.332
+       0.033   0.009  -0.041  -0.052   0.020   0.096   0.162   0.163
+
+..  _mk2v4cum.inp:
+
+mk2v4cum.inp
+------------
+A small text file that overides the standard input. Provides a few variables used by the umkehr algorithm::
+
+    READ (5,5000) JUZOUT,JUZDSK,OMFAC,JSX
+
+The format of the file is::
+
+    1 1    1.0000 U
+
+
+.. _phprofile.dat:
 
 phprofile.dat
 -------------
+Used in subroutine **STNDRD**. It is an initialization stage that reads 81 elements standard
+pressure-height profile and spline interpolation for forward model calculations::
 
-Unit 11, phprofil.dat. SUBROUTINE STNDRD. INITIALIZATION STAGE. READS 81 ELEEMNT STANDARD PRESSURE-HEIGHT PROFILE AND SPLINE INTERPOLATES FOR FORWARD MODEL CALCULATION
+    ~       READ (11,1100) (PS(I),I=1,81)
+    ~  1100 FORMAT (4X,7E10.3)
+
+The contents of the default file::
+
+    ~  1 1.000E+00 8.859E-01 7.829E-01 6.901E-01 6.067E-01 5.317E-01 4.643E-01 45AV
+    ~  8 4.039E-01 3.501E-01 3.023E-01 2.603E-01 2.233E-01 1.912E-01 1.635E-01 45AV
+    ~ 15 1.397E-01 1.193E-01 1.018E-01 8.694E-02 7.423E-02 6.339E-02 5.415E-02 45AV
+    ~ 22 4.628E-02 3.957E-02 3.386E-02 2.898E-02 2.483E-02 2.128E-02 1.825E-02 45AV
+    ~ 29 1.566E-02 1.345E-02 1.157E-02 9.959E-03 8.585E-03 7.412E-03 6.409E-03 45AV
+    ~ 36 5.550E-03 4.815E-03 4.184E-03 3.641E-03 3.174E-03 2.771E-03 2.423E-03 45AV
+    ~ 43 2.121E-03 1.858E-03 1.630E-03 1.431E-03 1.257E-03 1.104E-03 9.701E-04 45AV
+    ~ 50 8.523E-04 7.484E-04 6.567E-04 5.758E-04 5.044E-04 4.413E-04 3.856E-04 45AV
+    ~ 57 3.364E-04 2.931E-04 2.551E-04 2.216E-04 1.923E-04 1.666E-04 1.441E-04 45AV
+    ~ 64 1.245E-04 1.074E-04 9.258E-05 7.967E-05 6.848E-05 5.878E-05 5.039E-05 45AV
+    ~ 71 4.314E-05 3.689E-05 3.151E-05 2.689E-05 2.291E-05 1.949E-05 1.657E-05 45AV
+    ~ 78 1.406E-05 1.191E-05 1.008E-05 8.520E-06 7.189E-06 6.058E-06 5.097E-06 45AV
+
+
+..  _refractn.dat:
 
 refractn.dat
 ------------
-LINE 235
-Unit 13, refractn.dat. MAIN ROUTINE, INITIALIZATION , Reads An Array of Refraction corrections
-5 lines
-Total refraction + 12 refraction corrections
+The file is read inside the main routine where it reads in an array of refraction corrections::
+
+    ~      READ (13,5501) (TOTREF(I),(REFCOR(J,I),J=12,1,-1),I=1,5)
+    ~ 5501 FORMAT (6X,F2.0,12F6.2)
+
+File contents::
+
+    ~ REFRAC15  0.54  0.38  0.26  0.16  0.10  0.05  0.02  0.00 -0.00 -0.00 -0.00 -0.00
+    ~ REFRAC20  0.59  0.45  0.33  0.21  0.13  0.06  0.02  0.00 -0.00 -0.01 -0.00 -0.00
+    ~ REFRAC30  0.56  0.45  0.36  0.25  0.19  0.11  0.04  0.01 -0.00 -0.01 -0.00 -0.00
+    ~ REFRAC40  0.52  0.43  0.35  0.27  0.21  0.14  0.06  0.02  0.00 -0.01 -0.01 -0.00
+    ~ REFRAC55  0.47  0.39  0.33  0.26  0.21  0.15  0.09  0.04  0.01 -0.00 -0.01 -0.01
+
+..  _fstguess.dat:
 
 fstguess.dat
 ------------
 
-9  fstguess.dat, SUBROUTINE SASCO3 (ID,IFGLAT,PNOT,OMOBS,TDX)
-SUBROUTINE TO CREATE SASC STANDARD PROFILES. FG is based on seasonal cycle in all 16 layers, NOT the total ozone
-OMOBS is used to normalize seasonal FG to the observed total ozone
-INPUT INCLUDES LATITUDE BAND NUMBER 1,...,6    
-DAY AND MONTH TO GET JULIAN DAY 
-TOTAL OZONE IN M ATM-CM         
+This file is read in on unit 9 in subroutine **SASCO3** and generates the first-guess a-priori (FG).
+FG is based on the seasonal cycle in all 16 layers, NOT the total ozone. OMOBS is used to normalize seasonal FG to
+the observed total ozone. Input includes,
+
+    - LATITUDE BAND NUMBER 1,...,6
+    - DAY AND MONTH TO GET JULIAN DAY
+    - TOTAL OZONE IN M ATM-CM
   
- The "fstguess.dat" file lists parameters for generating typical seasonal variations in 
- ozone profile. The latitude-dependent climatology of monthly averages of ozone profiles 
- was compiled by NASA/Goddard (McPeters and Labow, 2003). The cosine fit to the 
- climatology is as following:
- AP(i)=COEF1(i) +COEF2(i)*COS((JULDAY-COEF3(i))*2*p/365),
- where AP(i) is a priori ozone amount in DU in layer i, COEF1 (i), COEF2 (i), COEF3 (i) 
- are coefficients of the fit for layer i tabulated in the file "fstguess.dat", and JULDAY is a 
- Julian day of the year. The file is organized in 14 blocks of three coefficients, where each 
- block represents the fit for a climatology averaged over 10-degree latitude band. The first 
- block has data for 60-degrees Northern latitude and above, and the last block has data for 
- 60-degrees Southern latitude and above. Each block is organized as following:
- COEF1(i=1,13)
- COEF3(i=1,13)
- COEF3(i=1,13),
- where i=1 is the bottom layer, i=13 is the top layer. The layering system is given in 
- pressure-level coordinates, where the bottom layer is confined between 1 and 0.5 atm, the 
- top pressure level of the layer is half of the pressure at the bottom level.
- 
+The "fstguess.dat" file lists parameters for generating typical seasonal variations in
+ozone profile. The latitude-dependent climatology of monthly averages of ozone profiles
+was compiled by NASA/Goddard (McPeters and Labow, 2003). The cosine fit to the
+climatology is as following::
+
+    AP(i) = COEF1(i) +COEF2(i)*COS((JULDAY-COEF3(i))*2*p/365),
+
+where,
+
+     - AP(i) is a priori ozone amount in DU in layer i,
+     - COEF1 (i), COEF2 (i), COEF3 (i) are coefficients of the fit for layer i tabulated in the file "fstguess.dat",
+     - JULDAY is a Julian day of the year.
+
+The file is organized in 14 blocks of three coefficients, where each block represents the fit for a climatology
+averaged over 10-degree latitude band. The first block has data for 60-degrees Northern latitude and above, and the
+last block has data for 60-degrees Southern latitude and above. Each block is organized as following:
+
+    - COEF1(i=1,13)
+    - COEF3(i=1,13)
+    - COEF3(i=1,13)
+
+where i=1 is the bottom layer, i=13 is the top layer. The layering system is given in
+pressure-level coordinates, where the bottom layer is confined between 1 and 0.5 atm, the
+top pressure level of the layer is half of the pressure at the bottom level.
+
+The file is read with the following Fortran code::
+
+    ~      DO 20 L=1,14                                                      00007530
+    ~      DO 20 K=1,3                                                       00007540
+    ~      READ (9,9000) (C(L,I,K),I=1,6)                                    TEMP****
+    ~      READ (9,9000) (C(L,I,K),I=7,13)                                   00007560
+    ~   20 CONTINUE                                                          00007570
+    ~ 9000 FORMAT (7E10.3)
+
+and the default file contents::
+
+  ~   0.173E+02 0.167E+02 0.408E+02 0.640E+02 0.752E+02 0.567E+02
+  ~   0.350E+02 0.199E+02 0.966E+01 0.331E+01 0.101E+01 0.333E+00 0.102E+00
+  ~   0.203E+01 0.315E+01 0.132E+02-0.155E+02-0.121E+02 0.567E+01
+  ~  -0.245E+01 0.986E+00-0.214E+01 0.103E+01 0.214E+00 0.389E-01 0.180E-01
+  ~   0.135E+03 0.133E+03 0.840E+02 0.234E+03 0.241E+03 0.600E+02
+  ~   0.288E+03 0.490E+02 0.185E+03 0.100E+01 0.362E+03 0.352E+03 0.110E+02
+  ~   0.178E+02 0.152E+02 0.320E+02 0.526E+02 0.741E+02 0.634E+02
+  ~   0.391E+02 0.213E+02 0.964E+01 0.332E+01 0.105E+01 0.341E+00 0.103E+00
+  ~  -0.266E+01 0.255E+01 0.120E+02-0.120E+02 0.119E+02 0.267E+01
+  ~  -0.326E+01 0.113E+01-0.108E+01 0.835E+00 0.216E+00 0.320E-01 0.300E-02
+  ~   0.338E+03 0.132E+03 0.920E+02 0.249E+03 0.630E+02 0.730E+02
+  ~   0.343E+03 0.149E+03 0.179E+03 0.358E+03 0.358E+03 0.363E+03 0.145E+03
+  ~   0.185E+02 0.142E+02 0.258E+02 0.446E+02 0.719E+02 0.676E+02
+  ~   0.429E+02 0.228E+02 0.992E+01 0.333E+01 0.106E+01 0.345E+00 0.103E+00
+  ~   0.404E+01-0.274E+01 0.116E+02 0.119E+02-0.105E+02-0.202E+01
+  ~   0.534E+01-0.202E+01 0.823E+00-0.679E+00 0.149E+00-0.231E-01 0.300E-02
+  ~   0.169E+03 0.330E+03 0.830E+02 0.620E+02 0.245E+03 0.337E+03
+  ~   0.178E+03 0.352E+03 0.347E+03 0.170E+03 0.355E+03 0.180E+03 0.145E+03
+  ~   0.204E+02 0.133E+02 0.180E+02 0.333E+02 0.674E+02 0.712E+02
+  ~   0.474E+02 0.244E+02 0.100E+02 0.320E+01 0.103E+01 0.347E+00 0.103E+00
+  ~   0.459E+01 0.239E+01-0.982E+01 0.957E+01-0.909E+01-0.349E+01
+  ~  -0.561E+01-0.177E+01-0.634E+00 0.348E+00 0.610E-01 0.120E-01 0.300E-02
+  ~   0.171E+03 0.135E+03 0.261E+03 0.700E+02 0.256E+03 0.300E+01
+  ~   0.700E+01 0.100E+01 0.142E+03 0.343E+03 0.347E+03 0.360E+03 0.145E+03
+  ~   0.164E+02 0.113E+02 0.753E+01 0.153E+02 0.517E+02 0.721E+02
+  ~   0.523E+02 0.261E+02 0.101E+02 0.314E+01 0.100E+01 0.337E+00 0.113E+00
+  ~  -0.291E+01-0.209E+01-0.205E+01-0.248E+01 0.480E+01 0.496E+01
+  ~  -0.450E+01-0.133E+01 0.325E+00-0.133E+00 0.117E-01 0.245E-02 0.400E-02
+  ~   0.264E+03 0.299E+03 0.295E+03 0.327E+03 0.130E+03 0.185E+03
+  ~   0.100E+02 0.200E+01 0.309E+03 0.152E+03 0.317E+03 0.182E+03 0.180E+03
+  ~   0.149E+02 0.100E+02 0.654E+01 0.146E+02 0.504E+02 0.745E+02
+  ~   0.570E+02 0.274E+02 0.102E+02 0.307E+01 0.970E+00 0.325E+00 0.113E+00
+  ~   0.259E+01-0.261E+01 0.188E+01-0.336E+01-0.314E+01-0.480E+01
+  ~  -0.241E+01 0.709E+00 0.229E+00-0.683E-01 0.194E-01-0.119E-01 0.400E-02
+  ~   0.930E+02 0.275E+03 0.124E+03 0.361E+03 0.333E+03 0.800E+01
+  ~   0.300E+01 0.166E+03 0.351E+03 0.145E+03 0.228E+03 0.150E+02 0.180E+03
+  ~   0.154E+02 0.111E+02 0.675E+01 0.125E+02 0.462E+02 0.751E+02
+  ~   0.600E+02 0.280E+02 0.102E+02 0.304E+01 0.950E+00 0.317E+00 0.113E+00
+  ~  -0.770E+00-0.297E+00 0.342E+00-0.169E+01 0.174E+01-0.339E+01
+  ~  -0.582E+00-0.538E+00-0.532E+00-0.960E-01-0.235E-01-0.123E-01 0.400E-02
+  ~   0.590E+02 0.192E+03 0.153E+03 0.210E+02 0.175E+03 0.900E+01
+  ~   0.263E+03 0.213E+03 0.183E+03 0.151E+03 0.530E+02 0.130E+02 0.180E+03
+  ~   0.161E+02 0.121E+02 0.698E+01 0.104E+02 0.421E+02 0.745E+02
+  ~   0.603E+02 0.282E+02 0.102E+02 0.304E+01 0.952E+00 0.317E+00 0.113E+00
+  ~   0.396E+01-0.262E+01 0.133E+01 0.144E+01-0.142E+01-0.183E+01
+  ~  -0.191E+01 0.180E+01 0.549E+00-0.802E-01 0.239E-01 0.115E-01 0.100E-02
+  ~   0.262E+03 0.106E+03 0.292E+03 0.282E+03 0.580E+02 0.110E+02
+  ~   0.208E+03 0.160E+02 0.354E+03 0.134E+03 0.239E+03 0.206E+03 0.264E+03
+  ~   0.101E+02 0.713E+01 0.417E+01 0.108E+02 0.456E+02 0.734E+02
+  ~   0.581E+02 0.279E+02 0.103E+02 0.309E+01 0.971E+00 0.324E+00 0.113E+00
+  ~  -0.240E+01-0.127E+01 0.424E+00 0.248E+01-0.391E+01-0.792E+00
+  ~   0.385E+01-0.242E+01 0.299E+00 0.386E-01 0.200E-02-0.379E-02 0.100E-02
+  ~   0.560E+02 0.830E+02 0.259E+03 0.275E+03 0.850E+02 0.197E+03
+  ~   0.170E+02 0.191E+03 0.600E+01 0.530E+02 0.217E+03 0.390E+02 0.264E+03
+  ~   0.153E+02 0.127E+02 0.851E+01 0.147E+02 0.522E+02 0.730E+02
+  ~   0.531E+02 0.265E+02 0.104E+02 0.317E+01 0.100E+01 0.333E+00 0.113E+00
+  ~   0.386E+01-0.260E+01 0.135E+01 0.318E+01-0.795E+01 0.111E+01
+  ~   0.561E+01 0.194E+01 0.339E+00 0.190E+00-0.268E-01 0.544E-02 0.100E-02
+  ~   0.263E+03 0.100E+03 0.274E+03 0.263E+03 0.630E+02 0.430E+02
+  ~   0.190E+02 0.100E+01 0.161E+03 0.153E+03 0.326E+03 0.183E+03 0.264E+03
+  ~   0.139E+02 0.109E+02 0.169E+02 0.340E+02 0.682E+02 0.716E+02
+  ~   0.485E+02 0.249E+02 0.104E+02 0.330E+01 0.104E+01 0.345E+00 0.106E+00
+  ~   0.103E+01-0.233E+01 0.795E+01-0.123E+02 0.148E+02 0.177E+01
+  ~   0.567E+01-0.167E+01 0.874E+00 0.493E+00-0.884E-01-0.168E-01 0.200E-02
+  ~   0.280E+03 0.970E+02 0.241E+03 0.600E+02 0.247E+03 0.295E+03
+  ~   0.800E+01 0.170E+03 0.180E+03 0.168E+03 0.347E+03 0.362E+03 0.251E+03
+  ~   0.106E+02 0.104E+02 0.218E+02 0.437E+02 0.730E+02 0.681E+02
+  ~   0.434E+02 0.228E+02 0.102E+02 0.343E+01 0.106E+01 0.341E+00 0.106E+00
+  ~   0.178E+01-0.209E+01 0.953E+01 0.149E+02-0.142E+02 0.348E+01
+  ~   0.561E+01 0.170E+01 0.118E+01 0.837E+00 0.174E+00 0.240E-01 0.200E-02
+  ~   0.239E+03 0.101E+03 0.242E+03 0.242E+03 0.670E+02 0.281E+03
+  ~   0.353E+03 0.341E+03 0.180E+03 0.172E+03 0.172E+03 0.172E+03 0.251E+03
+  ~   0.111E+02 0.103E+02 0.241E+02 0.462E+02 0.675E+02 0.605E+02
+  ~   0.390E+02 0.210E+02 0.966E+01 0.331E+01 0.103E+01 0.332E+00 0.106E+00
+  ~  -0.272E+01 0.103E+01-0.402E+01-0.747E+01-0.269E+01 0.282E+01
+  ~   0.397E+01 0.784E+00-0.143E+01 0.886E+00 0.200E+00 0.288E-01 0.200E-02
+  ~   0.380E+02 0.305E+03 0.490E+02 0.365E+03 0.400E+01 0.337E+03
+  ~   0.338E+03 0.312E+03 0.356E+03 0.171E+03 0.172E+03 0.179E+03 0.251E+03
+  ~   0.104E+02 0.103E+02 0.263E+02 0.486E+02 0.620E+02 0.505E+02
+  ~   0.353E+02 0.196E+02 0.932E+01 0.320E+01 0.100E+01 0.331E+00 0.990E-01
+  ~  -0.335E+01 0.773E+00-0.218E+01-0.146E+02-0.126E+02-0.778E+01
+  ~   0.209E+01-0.143E+01-0.228E+01-0.107E+01-0.254E+00 0.572E-01 0.130E-01
+  ~   0.290E+02 0.230E+02 0.285E+03 0.304E+03 0.272E+03 0.190E+03
+  ~   0.279E+03 0.150E+02 0.355E+03 0.356E+03 0.357E+03 0.173E+03 0.168E+03
 
 
+.. _stdmscdobc_depol_top5.dat:
 
-stdmscdobc_depol_top5
----------------------
+stdmscdobc_depol_top5.dat
+-------------------------
+This file is read in the main subroutine. It contains the multiple scattering corrections as an array (12x42). The
+file used to correct for multiple-scattering component of the N-values calculated in forward model as
+single-scatted radiance. Note taht "stdrfcdobc_depol_top5_std21.dat" is a file to correct N-value for atmospheric refraction of
+the solar radiation.
 
-LINE 192
-8 stdmscdobc_depol_top5.dat, 
-READ MULTIPLE SCATTERING CORRECTIONS array ( 12,42)
+These data are organized as the following two blocks:
+
+    - first block is for sea-level pressure (lines 1-21).
+    - second block is for 500 mb pressure (lines 22-42), so we can use linear interpolation in pressure to the altitude of the
+      station.
+
+Each block has data for low latitude (3 lines=3 standard profiles at 225, 275 and 325
+DU), followed by ozone profile data typical for the middle latitudes (8 lines, from 225 to
+575 DU, by 50 DU increments), and then by the data for high latitudes (10 profiles, from
+125 to 575 DU by 50 DU increments).
+
+The columns are data at 12 SZAs: from 60 to 90 SZA. The tables were produced using TOMRAD RT code, based on
+Dave-Mateer code. In MS correction tables ("stdmscdob*_depol_top5.dat", * is a, c, d for wavelength pairs A, C,
+D) the de-polarization of radiation (important for MS correction, and cancels out in SS N-
+values) is taken into account. I also re-calculated refraction correction tables
+(stdrfcdob*.dat). You will see that refraction table for C-pair is very different from the
+old table. I am not sure what is causing it. So, use refraction correction tables with
+caution (but you have to use the new table for all 3 pairs for consistency).
+
+
+The file is read with following FORTRAN statements::
+
+          READ (8,*) ((CQMS(I,J),I=1,12),J=1,42)
+
+the default contents are::
+
+    -5.484 -5.646 -5.701 -5.507 -5.005 -3.794 -1.07 1.973 4.338 5.625 5.688 5.34
+    -4.905 -4.959 -4.821 -4.329 -3.41 -1.449 2.334 5.507 7.141 7.557 7.312 6.835
+    -4.083 -3.998 -3.616 -2.759 -1.363 1.306 5.547 8.152 9.069 9.048 8.688 8.164
+    -4.785 -4.864 -4.796 -4.454 -3.802 -2.434 0.211 2.741 4.517 5.467 5.526 5.26
+    -3.818 -3.771 -3.493 -2.856 -1.83 0.116 3.387 5.857 7.113 7.473 7.295 6.913
+    -2.805 -2.614 -2.1 -1.133 0.284 2.73 6.218 8.266 9.029 9.049 8.761 8.324
+    -1.739 -1.385 -0.598 0.73 2.524 5.302 8.582 10.092 10.499 10.337 9.998 9.541
+    -0.741 -0.214 0.86 2.55 4.661 7.573 10.431 11.493 11.679 11.415 11.048 10.583
+    0.165 0.873 2.242 4.277 6.628 9.502 11.879 12.607 12.65 12.32 11.935 11.469
+    1.015 1.91 3.578 5.923 8.414 11.113 13.032 13.522 13.47 13.097 12.704 12.244
+    1.808 2.895 4.86 7.465 9.999 12.445 13.969 14.289 14.17 13.765 13.367 12.916
+    -5.352 -5.558 -5.723 -5.748 -5.611 -5.207 -4.355 -3.437 -2.496 -1.287 -0.419 0.253
+    -4.701 -4.807 -4.81 -4.61 -4.192 -3.322 -1.679 -0.016 1.459 2.786 3.293 3.366
+    -3.971 -3.971 -3.795 -3.345 -2.612 -1.232 1.147 3.225 4.664 5.509 5.606 5.387
+    -3.159 -3.038 -2.661 -1.929 -0.85 1.037 3.93 5.999 7.089 7.475 7.353 7.015
+    -2.278 -2.023 -1.421 -0.377 1.061 3.385 6.467 8.235 8.945 9.03 8.795 8.399
+    -1.357 -0.951 -0.097 1.28 3.061 5.684 8.635 9.995 10.403 10.302 10.006 9.582
+    -0.368 0.203 1.326 3.035 5.096 7.828 10.428 11.407 11.605 11.389 11.056 10.62
+    0.688 1.432 2.826 4.827 7.061 9.709 11.872 12.558 12.62 12.335 11.982 11.545
+    1.772 2.698 4.36 6.601 8.897 11.324 13.057 13.524 13.495 13.168 12.808 12.378
+    2.82 3.923 5.824 8.222 10.47 12.607 13.976 14.29 14.202 13.852 13.497 13.081
+    -2.675 -2.683 -2.614 -2.421 -2.079 -1.326 0.407 2.467 4.154 5.132 5.209 4.959
+    -2.016 -1.946 -1.747 -1.365 -0.771 0.42 2.748 4.81 5.961 6.327 6.186 5.842
+    -1.12 -0.961 -0.618 -0.038 0.8 2.332 4.807 6.445 7.113 7.185 6.964 6.587
+    -1.903 -1.864 -1.734 -1.478 -1.083 -0.3 1.286 2.948 4.215 4.961 5.039 4.85
+    -0.962 -0.851 -0.612 -0.208 0.371 1.44 3.334 4.913 5.817 6.155 6.065 5.793
+    0.02 0.203 0.555 1.104 1.848 3.122 5.059 6.35 6.93 7.039 6.872 6.56
+    1.04 1.3 1.763 2.445 3.314 4.67 6.416 7.371 7.728 7.717 7.515 7.191
+    1.968 2.301 2.868 3.661 4.609 5.945 7.419 8.111 8.332 8.256 8.035 7.707
+    2.776 3.178 3.841 4.725 5.709 6.961 8.163 8.667 8.803 8.684 8.453 8.126
+    3.495 3.962 4.71 5.656 6.635 7.76 8.723 9.098 9.178 9.034 8.798 8.477
+    4.135 4.662 5.48 6.461 7.402 8.386 9.156 9.44 9.483 9.319 9.082 8.769
+    -2.517 -2.588 -2.644 -2.657 -2.619 -2.479 -2.085 -1.508 -0.791 0.202 0.913 1.449
+    -1.767 -1.768 -1.719 -1.595 -1.389 -0.968 -0.071 1.01 2.092 3.135 3.547 3.612
+    -1.009 -0.943 -0.791 -0.53 -0.154 0.544 1.868 3.2 4.239 4.921 5.03 4.879
+    -0.212 -0.078 0.178 0.577 1.118 2.063 3.647 4.953 5.752 6.113 6.066 5.828
+    0.619 0.82 1.181 1.715 2.405 3.53 5.173 6.283 6.836 6.993 6.866 6.587
+    1.466 1.736 2.199 2.855 3.663 4.877 6.407 7.271 7.634 7.668 7.498 7.2
+    2.322 2.655 3.208 3.961 4.837 6.041 7.36 8.007 8.242 8.201 8.006 7.7
+    3.166 3.552 4.173 4.983 5.868 6.983 8.07 8.557 8.71 8.626 8.419 8.114
+    3.979 4.408 5.076 5.904 6.753 7.733 8.609 8.98 9.082 8.972 8.762 8.463
+    4.708 5.166 5.855 6.667 7.445 8.281 8.986 9.278 9.349 9.228 9.022 8.736
+
+
+.. _std_pfl.asc:
 
 std_pfl.asc
 -----------
+Reads in other parts of the first guess-apriori. Other parts are read in from :ref:`totoz_press.dat`.::
 
-LINE 189
-READ FG, READ Total ozone at pressure levels 0.5, 0.8, 0.7, 0.9
-PRES(61)
-TABFG(61,12)
+      READ (18,*) (PRES(I),I=1,61)
+      READ (18,*) ((TABFG(I,J),I=1,61),J=1,21)
 
-18 std_pfl.asc, 
+A partial listing of the default file contents are::
+
+   ~     1013.2      852.04      716.48      602.48      506.62      426.02
+   ~     358.24      301.24      253.31      213.01      179.12      150.62
+   ~     126.66      106.50      89.559      75.310      63.328      53.252
+   ~     44.780      37.655      31.664      26.626      22.390      18.828
+   ~     15.832      13.313      11.195      9.4138      7.9160      6.6565
+   ~     5.5975      4.7069      3.9580      3.3283      2.7987      2.3534
+   ~     1.9790      1.6641      1.3994      1.1767     0.98950     0.83207
+   ~    0.69968     0.58836     0.49475     0.41603     0.34984     0.29418
+   ~    0.24738     0.20802     0.17492     0.14709     0.12369     0.10401
+   ~   0.087460    0.073545    0.061844    0.052004    0.043730    0.036773
+   ~   0.030922
+   ~     4.3647      3.9432      3.5449      3.1473      2.7462      2.3915
+   ~     2.0778      1.7844      1.5077      1.2893      1.1285      1.0143
+   ~    0.97342      1.1411      1.5573      2.2382      3.2721      4.9356
+   ~     7.2844      10.258      13.420      15.575      16.665      16.941
+   ~     16.511      15.272      13.550      11.666      9.8032      8.0367
+   ~     6.4560      5.1041      3.9723      3.0207      2.2521      1.6549
+   ~     1.2054     0.87929     0.64340     0.47191     0.34660     0.25443
+   ~    0.18662     0.13680     0.10025    0.073471    0.053857    0.039486
+   ~   0.028952    0.021227    0.015563    0.011410   0.0083645   0.0061321
+   ~  0.0044956   0.0032959   0.0024163   0.0017715   0.0012988  0.00095216
+   ~  0.0026158
+   ~     4.3535      3.9405      3.5492      3.1569      2.7588      2.4003
+   ~     2.0763      1.7647      1.4789      1.3263      1.3270      1.4778
+   ~     1.8450      2.6837      4.0771      6.0542      8.5477      11.232
+   ~     14.026      16.874      19.343      20.287      19.912      18.708
+   ~     17.048      15.185      13.293      11.475      9.7472      8.0487
+   ~     6.4823      5.1217      3.9769      3.0196      2.2500      1.6535
+   ~     1.2051     0.87937     0.64355     0.47200     0.34662     0.25442
+   ~    0.18661     0.13679     0.10025    0.073471    0.053858    0.039486
+   ~   0.028952    0.021227    0.015563    0.011409   0.0083644   0.0061321
+   ~  0.0044956   0.0032959   0.0024164   0.0017715   0.0012988  0.00095216
+   ~  0.0026158
 
 
-This is file for tabulated ("look-up") data:
-"stdmscdobc_depol_top5.dat" - file to correct for multiple-scattering component of  the 
-N-values calculated in forward model as single-scatted radiances;
-"stdrfcdobc_depol_top5_std21.dat" file to correct N-value for atmospheric refraction of
-the solar radiation;
+..  _stdjacmsc.dat:
 
-These data are organized as following: 
-two blocks: first block is for sea-level pressure (lines 1-21), second block is for 500 mb 
-pressure (lines 22-42), so we can use linear interpolation in pressure to the altitude of the 
-station. 
-Each block has data for low latitude (3 lines=3 standard profiles at 225, 275 and 325 
-DU), followed by ozone profile data typical for the middle latitudes (8 lines, from 225 to 
-575 DU, by 50 DU increments), and then by the data for high latitudes (10 profiles, from 
-125 to 575 DU by 50 DU increments). 
-The columns are data at 12 SZAs: from 60 to 90 SZA  
-The tables were produced using TOMRAD RT code, based on Dave-Mateer code. In MS 
-correction tables ("stdmscdob*_depol_top5.dat", * is a, c, d for wavelength pairs A, C, 
-D) the de-polarization of radiation (important for MS correction, and cancels out in SS N-
-values) is taken into account. I also re-calculated refraction correction tables 
-(stdrfcdob*.dat). You will see that refraction table for C-pair is very different from the 
-old table. I am not sure what is causing it. So, use refraction correction tables with 
-caution (but you have to use the new table for all 3 pairs for consistency).
- 
-The ozone absorption and Rayleigh scattering coefficients at three wavelength pairs are 
+stdjacmsc.dat
+-------------
+Files called ``stdjacmsc.dat`` are MS correction Jacobian (12x61) + ozone profile (1x61).
+Each block of 13 lines is for one of 21 standard profiles (3 of low latitudes, 8 of middle
+latitudes, and 10 of high latitudes sets). They are used to correct MS tables for change in
+ozone profile dMSC=dN/dx*(X_new-X_std)::
+
+        do k=1,21
+        do j=1,13
+        READ (19,*) (TABJMS(I,J,K),I=1,61)
+        end do
+        end do
+
+A sample of the default file listing::
+
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -0.00011697 -2.225e-05 5.013e-05 3.243e-05 -4.83e-06 -7.352e-05 -0.00010188 -1.9e-05 0.00013726 0.00040955 0.00067989 0.0008449 0.00104032 0.00125291 0.00168892 0.00253026 0.00364862 0.00511768 0.00738095 0.01070462 0.0147633 0.01949904 0.027245 0.03798057 0.04771693 0.05554426 0.06974235 0.08389117 0.08231604 0.07137209 0.06746385 0.06425499 0.05731055 0.04917028 0.04199158 0.04018306 0.04641747 0.05670145 0.07575522 0.10749708 0.14960513 0.20026342 0.22991957 0.22824828 0.22058839 0.20227923 0.17364256 0.13534873
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -0.00011435 -1.164e-05 6.768e-05 5.17e-05 1.508e-05 -5.504e-05 -8.145e-05 1.203e-05 0.00018384 0.00047897 0.00078874 0.0010213 0.00131984 0.00168412 0.00235312 0.0035398 0.00512065 0.00720081 0.01041832 0.01515741 0.02095212 0.02772094 0.03791418 0.05128821 0.06319019 0.07255483 0.08849243 0.10352095 0.09997614 0.08579856 0.07909156 0.0735735 0.0647858 0.05513758 0.04682689 0.04461842 0.05136291 0.06256388 0.08230812 0.11433998 0.15673336 0.20743364 0.23620975 0.23245775 0.22195883 0.19993265 0.16670506 0.12287987
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -0.00010617 9.57e-06 0.00010037 8.792e-05 5.301e-05 -1.897e-05 -4.137e-05 7.083e-05 0.00026963 0.00060375 0.0009883 0.00135984 0.00187382 0.00255939 0.00373105 0.00567411 0.0082772 0.01171723 0.01701432 0.02478353 0.03428795 0.0453947 0.06061748 0.07919036 0.09526341 0.10749382 0.12577539 0.14089422 0.13255574 0.11178304 0.09919754 0.08893794 0.07668746 0.06438707 0.05412566 0.0511285 0.05844244 0.0707697 0.09111583 0.12287292 0.16474132 0.21432349 0.24130312 0.23500972 0.22110518 0.1947155 0.1561679 0.10597651
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -9.159e-05 4.58e-05 0.00015534 0.00014769 0.00011376 3.557e-05 1.642e-05 0.00015709 0.00039731 0.0007918 0.00130249 0.00192121 0.00282391 0.00409646 0.00621096 0.00960477 0.01418808 0.02028183 0.02954832 0.04298825 0.05942163 0.07861742 0.10285079 0.13029327 0.15328221 0.17006139 0.19047948 0.20295546 0.18481728 0.15231991 0.1292668 0.11078577 0.09294058 0.07660624 0.06344326 0.0591288 0.06683311 0.0801654 0.10077183 0.13156159 0.17194384 0.21912304 0.24363168 0.23508574 0.21821496 0.18810668 0.14508625 0.0895813
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -7.353e-05 9.707e-05 0.00023448 0.00023135 0.00019466 0.00010061 7.961e-05 0.00025789 0.00055457 0.0010335 0.00173823 0.00275641 0.00429715 0.00654578 0.01026486 0.01617354 0.0242189 0.03498117 0.05107387 0.07406351 0.10213571 0.1348895 0.17358085 0.21444517 0.2475094 0.27050872 0.29157533 0.29625757 0.26087041 0.2096889 0.17019747 0.13914209 0.1131722 0.09126413 0.07419776 0.06796351 0.07568551 0.08962117 0.11002974 0.13929934 0.17744647 0.22127423 0.24301521 0.232901 0.21401859 0.18147382 0.13558758 0.07672007
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -5.091e-05 0.00019616 0.00039482 0.00039197 0.00033438 0.00018299 0.00013548 0.00038127 0.0007869 0.00143801 0.00256511 0.00447701 0.00746532 0.01195406 0.01944039 0.03135861 0.04773823 0.06979916 0.10190212 0.14662802 0.20106025 0.26439144 0.33380957 0.40073404 0.45205098 0.48490074 0.501268 0.48238732 0.40731099 0.31663779 0.2433433 0.18720975 0.14576099 0.11373656 0.08985118 0.08005568 0.08697203 0.1007168 0.11997058 0.14647842 0.1806815 0.21891447 0.23679068 0.22579311 0.20591823 0.17240158 0.12555321 0.06567644
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -3.826e-05 0.00037684 0.00070291 0.00067678 0.00053785 0.00020822 5.623e-05 0.00043226 0.00107276 0.00212285 0.0042598 0.00832764 0.01484891 0.02485591 0.04175412 0.06884145 0.1063597 0.15717651 0.22747101 0.32068985 0.43305958 0.56273496 0.69225423 0.80104325 0.87590283 0.91475084 0.90533903 0.82418442 0.66370868 0.49525541 0.35837095 0.25707016 0.18917076 0.1408952 0.10678121 0.09133353 0.09542671 0.10645514 0.12229897 0.14421459 0.17210042 0.20205024 0.2153413 0.20556239 0.18777527 0.15764624 0.11545779 0.061495
+    0 0 0 0 0 0 0 0 0 0 0 0 0 -4.018e-05 0.00052128 0.00095643 0.00090344 0.00068427 0.00018598 -4.039e-05 0.00053227 0.00152432 0.00316851 0.00658894 0.01318278 0.02379659 0.04013808 0.06753913 0.11117768 0.17158813 0.25337974 0.35922698 0.48987713 0.64447618 0.82000263 0.98204314 1.09970014 1.16731412 1.18663567 1.14063743 1.00642402 0.78733769 0.57191804 0.39968319 0.27536143 0.19545983 0.14094144 0.1037828 0.08630868 0.08761998 0.09490925 0.10723219 0.12602997 0.14990906 0.17543059 0.18729441 0.18033816 0.1668692 0.14311235 0.10931684 0.06579531
+    0 0 0 0 0 0 0 0 0 0 0 0 0 1.279e-05 0.0006113 0.00108993 0.00108193 0.00092268 0.0005043 0.00045459 0.00138564 0.00292987 0.00541715 0.01017555 0.018885 0.03270358 0.05372686 0.08743212 0.13913234 0.20981396 0.30464738 0.41745827 0.54284385 0.68601103 0.84327699 0.97927383 1.0644218 1.09799187 1.08585733 1.02192575 0.88811493 0.68465697 0.49030538 0.33782055 0.22955061 0.16084181 0.11457109 0.08361879 0.06910015 0.06968014 0.0749404 0.0856161 0.10356665 0.12665409 0.15223053 0.16527836 0.16069402 0.15081654 0.13230856 0.10539359 0.07041234
+    0 0 0 0 0 0 0 0 0 0 0 0 0 0.00014947 0.00069635 0.00118733 0.00135293 0.00148067 0.00152234 0.00203565 0.00358868 0.00599601 0.0096885 0.01611542 0.02713827 0.04418629 0.06955979 0.10583272 0.15550698 0.22080266 0.30583287 0.39677747 0.48286943 0.5732896 0.664323 0.74012464 0.78341198 0.78662002 0.75689011 0.70096095 0.60652528 0.46556683 0.33199263 0.22979182 0.15814816 0.11214857 0.08079408 0.05993599 0.050654 0.05228888 0.05762704 0.06838298 0.08665162 0.11046614 0.13784227 0.15264141 0.14929735 0.14132476 0.12563805 0.10244568 0.07209945
+    0 0 0 0 0 0 0 0 0 0 0 0 0 0.00025343 0.0007692 0.00128397 0.00160584 0.0019907 0.00244323 0.0034287 0.00544319 0.00846185 0.01296992 0.02063545 0.03358293 0.05337509 0.08252845 0.12010257 0.16523567 0.22169201 0.29227108 0.36465325 0.42880101 0.49123591 0.54844653 0.59775222 0.62910659 0.62790357 0.6003734 0.55412542 0.479359 0.36786847 0.26226381 0.18327465 0.12843245 0.09259061 0.0677206 0.05115473 0.04419098 0.04662518 0.05251712 0.06364175 0.08208062 0.10620824 0.13422567 0.14955143 0.14643959 0.138841 0.12373188 0.10131685 0.07194747
+    0 0 0 0 0 0 0 0 0 0 0 0 0 0.00036571 0.00089427 0.0014676 0.00194448 0.00257265 0.00340084 0.00484904 0.00738677 0.01111962 0.01660932 0.02562231 0.04042561 0.06277818 0.09533673 0.13360586 0.17330316 0.21960762 0.27388639 0.33098306 0.38533394 0.43665792 0.48174267 0.52226453 0.55086684 0.55108621 0.52821118 0.48782392 0.42145628 0.32301639 0.22999289 0.16201553 0.11533134 0.08430823 0.06243038 0.04775442 0.04180722 0.04467981 0.05095191 0.06228647 0.08070782 0.10483448 0.13291827 0.1483257 0.14528671 0.13781156 0.12290109 0.10075835 0.07173397
+    0.0026 0.001 0.0013 0.0018 0.0024 0.0033 0.0045 0.0061 0.0084 0.0114 0.0156 0.0212 0.029 0.0395 0.0539 0.0735 0.1003 0.1368 0.1866 0.2544 0.3466 0.4719 0.6434 0.8793 1.2054 1.6549 2.2521 3.0207 3.9723 5.1041 6.456 8.0367 9.8032 11.666 13.55 15.272 16.511 16.941 16.665 15.575 13.42 10.258 7.2844 4.9356 3.2721 2.2382 1.5573 1.1411 0.9734 1.0143 1.1285 1.2893 1.5077 1.7844 2.0778 2.3915 2.7462 3.1473 3.5449 3.9432 4.3647
+
+
+..  _nrl.dat:
+
+nrl.dat
+-------
+Reads in the NRL temperature/altitude climatology for monthly mean and zonal averaged profiles::
+
+      do jj=1,5
+      read(15,*)
+      end do
+      do i=1,12
+      do j=1,45
+      READ(15, 9796) (TNRL(i,j,k),k=1,10)
+      end do
+      do jj=1,15
+      read(15,*)
+      end do
+      do j=1,45
+      READ(15, 9796) (TNRL(i,j,k),k=10,19)
+      end do
+      do jj=1,15
+      read(15,*)
+      end do
+      end do
+
+
+The default (partial) file contents::
+
+                                Temperature (K) FOR  J A N U A R Y
+
+
+               -90    -80    -70    -60    -50    -40    -30    -20    -10    0
+
+      0. KM  268.80 268.80 272.00 275.20 281.40 289.50 295.90 298.90 300.50 300.60
+      1. KM  262.90 263.20 266.30 269.80 276.30 284.40 290.60 293.50 294.90 295.00
+      2. KM  256.90 257.60 260.70 264.40 271.20 279.20 285.30 288.10 289.20 289.30
+      3. KM  251.00 252.00 255.00 259.10 266.00 274.10 280.00 282.70 283.60 283.70
+      4. KM  245.00 246.40 249.40 253.70 260.90 268.90 274.70 277.30 277.90 278.00
+      5. KM  240.80 242.20 244.70 248.60 255.40 263.00 268.60 271.20 271.80 271.90
+      6. KM  236.50 238.00 240.10 243.60 249.80 257.00 262.50 265.20 265.60 265.80
+      7. KM  233.90 235.20 236.40 238.90 243.80 250.20 255.60 258.50 259.00 259.10
+      8. KM  231.40 232.50 232.80 234.20 237.90 243.40 248.80 251.70 252.30 252.50
+      9. KM  228.80 229.70 229.10 229.50 231.90 236.60 241.90 245.00 245.70 245.80
+     10. KM  226.20 226.90 225.50 224.80 225.90 229.80 235.00 238.30 239.00 239.20
+     11. KM  228.00 228.00 226.70 225.30 224.80 226.30 229.20 231.00 231.20 231.20
+     12. KM  229.80 229.10 227.80 225.80 223.70 222.80 223.40 223.80 223.30 223.20
+     13. KM  231.70 230.30 229.00 226.30 222.50 219.30 217.60 216.50 215.50 215.30
+     14. KM  233.50 231.40 230.10 226.80 221.40 215.80 211.80 209.30 207.60 207.30
+     15. KM  234.50 232.20 230.90 227.30 221.10 214.40 209.30 206.20 204.30 203.80
+     16. KM  235.60 232.90 231.70 227.80 220.80 212.90 206.80 203.10 200.90 200.30
+     17. KM  235.90 233.30 232.10 228.20 221.30 213.60 207.70 204.20 202.00 201.30
+     18. KM  236.20 233.80 232.40 228.70 221.80 214.20 208.50 205.20 203.10 202.30
+     19. KM  236.50 234.20 232.80 229.10 222.30 214.90 209.40 206.30 204.20 203.30
+     20. KM  236.80 234.60 233.20 229.60 222.80 215.50 210.20 207.40 205.30 204.30
+     21. KM  236.40 234.80 233.30 230.20 224.00 217.50 212.60 209.80 207.90 206.90
+     22. KM  236.10 235.00 233.40 230.80 225.30 219.50 215.00 212.10 210.40 209.60
+
+
+..  _coef_dobcl.dat:
+
+coef_dobcl.dat
+--------------
+File *coef_dobacdh.dat* and *coef_dobacdl.dat* are part of Bass and Paur tables for wavelengths within band-passes
+for A, C, D pairs. There are 3 blocks in high and low wavelengths data (3x161 and 3x61 respectively).
+The line format is as following:
+
+    - wavelength \*10 (nm),
+    - quadrature weights (from 0 to 1),
+    - ET solar flux (W/m2/sec),
+    - alfa0, alfa1, alfa2, beta, de-polarization coefficient
+
+where ozone absorption coefficient = alfa0 + alfa1\*Temp + alfa2\*Temp\*Temp, beta is Rayleigh extinction coefficient::
+
+    read(97,*)alamw(ii),sfw(ii),etfw(ii),alfaw(ii),acoftw(ii), acoftsw(ii),betaw(ii),rhow(ii)
+
+The ozone absorption and Rayleigh scattering coefficients at three wavelength pairs are
 as following::
 
     A_short (305.5), A_long (325.0), C_short (311.5), C_long (332.4), D_short (317.6),
     D_long (339.8)
-         DATA ALFA/4.7815,3.1154E-1,2.1960,0.1151,0.9764,3.6910E-2/
-          DATA ACOFT/1.0329E-2,1.4906E-3,5.6383E-3,6.8329E-4,3.0454E-3,
-         * 3.4829E-4/
-          DATA ACOFTS/4.2446E-5,7.1465E-6,2.9501E-5,3.8094E-6,1.8284E-5,
-         * 2.4727E-6/
-          DATA BETA/1.1260,0.8635,1.0362,0.7845,0.9532,0.7138/,
+    DATA ALFA/4.7815,3.1154E-1,2.1960,0.1151,0.9764,3.6910E-2/
+    DATA ACOFT/1.0329E-2,1.4906E-3,5.6383E-3,6.8329E-4,3.0454E-3, 3.4829E-4/
+    DATA ACOFTS/4.2446E-5,7.1465E-6,2.9501E-5,3.8094E-6,1.8284E-5, 2.4727E-6/
+    DATA BETA/1.1260,0.8635,1.0362,0.7845,0.9532,0.7138/
 
-where ALFA, ACOFT, and ACOFTS are coefficients of the second-degree polynomial 
-fit of the spectral ozone absorption sensitivity to the atmospheric temperature variability. 
-The BETA is a spectral Rayleigh scattering coefficient.
+where ALFA, ACOFT, and ACOFTS are coefficients of the second-degree polynomial
+fit of the spectral ozone absorption sensitivity to the atmospheric temperature variability.
+The BETA is a spectral Rayleigh scattering coefficient::
 
-The files called ``stdweffdobc_depol_top5.datn`` are data to correct N-values for change in
-ozone effective X-section as function of SZA (change of weighting of spectral 
-contributions within the band-pass as SZA changes and shorter wavelengths are absorbed 
-stronger than longer wavelengths. Thus the median wavelength shifts.) They are not used 
-in the latest version where RT calculations are done at high resolution within th band-
-pass, followed by convolution over the ban-pass function instead of using effective X-
-section.
+    3100 0 333.5 2.54953 0.00733053 3.90155e-05 1.05657 0.0317
+    3100.5 1.3349e-05 353.7 2.55553 0.0066201 2.59283e-05 1.05584 0.0317
+    3101 6.4592e-05 401.7 2.56761 0.00646565 1.82683e-05 1.0551 0.0316999
+    3101.5 0.00031621 485.9 2.55577 0.00681103 2.96886e-05 1.05437 0.0317003
+    3102 0.00062329 630.3 2.55079 0.00694726 3.3735e-05 1.05363 0.0316988
+    3102.5 0.002461 765.3 2.57248 0.00626325 2.33382e-05 1.05292 0.0316915
+    3103 0.0063572 836.3 2.56446 0.00637606 2.78425e-05 1.05219 0.0316896
+    3103.5 0.019658 854.1 2.55744 0.00607143 2.86083e-05 1.05146 0.031687
+    3104 0.033803 835.8 2.54426 0.00599961 2.47855e-05 1.05074 0.0316845
+    3104.5 0.05489 799.6 2.48776 0.00658954 4.55863e-05 1.05002 0.031682
+    3105 0.083089 826.4 2.47053 0.00614139 3.18891e-05 1.04929 0.0316795
+    3105.5 0.11215 853.2 2.41804 0.00635868 3.73642e-05 1.04856 0.031677
+    3106 0.14424 875.6 2.40661 0.00576522 3.18212e-05 1.04783 0.0316745
+    3106.5 0.18068 903.4 2.39471 0.00616479 3.36459e-05 1.04712 0.031672
+    3107 0.21752 949.2 2.39477 0.00610013 3.02921e-05 1.0464 0.0316695
+    3107.5 0.27119 997 2.38188 0.00676014 4.09752e-05 1.04568 0.031667
+    3108 0.325 986.8 2.38129 0.00645609 3.63824e-05 1.04495 0.0316645
+    3108.5 0.38669 931.2 2.36099 0.0059979 3.17047e-05 1.04422 0.031662
+    3109 0.45043 857.9 2.34251 0.00627333 3.47036e-05 1.04351 0.0316595
+    3109.5 0.518 823.4 2.32952 0.0061882 2.8707e-05 1.0428 0.031657
+    3110 0.57107 849.8 2.31182 0.00621957 3.58183e-05 1.04208 0.0316545
+    3110.5 0.65117 879.5 2.31582 0.00562162 1.83472e-05 1.04136 0.031652
+    3111 0.70443 925.9 2.30239 0.00592345 2.54244e-05 1.04064 0.0316495
+    3111.5 0.76987 977.6 2.29213 0.00606305 3.16905e-05 1.03992 0.031647
+    3112 0.83886 968.9 2.28738 0.00614698 2.92759e-05 1.03921 0.0316445
+    3112.5 0.89914 890.8 2.3105 0.0053002 1.42947e-05 1.03849 0.031642
+    3113 0.94485 832.9 2.2959 0.00557316 2.51151e-05 1.03778 0.0316395
+    3113.5 0.98244 844.5 2.29963 0.00585386 3.14654e-05 1.03706 0.031637
+    3114 0.99343 890.3 2.30312 0.00552053 2.56023e-05 1.03634 0.0316345
+    3114.5 0.99652 930.1 2.30287 0.00557587 3.35614e-05 1.03563 0.031632
+    3115 0.98644 891.9 2.27825 0.00509052 2.93181e-05 1.03492 0.0316295
+    3115.5 0.95083 825.6 2.25285 0.00498926 2.54801e-05 1.03421 0.031627
+    3116 0.91463 754.7 2.23232 0.00538664 3.34066e-05 1.03349 0.0316245
+    3116.5 0.84874 715.2 2.20094 0.00513887 2.83144e-05 1.03279 0.031622
+    3117 0.78494 704.6 2.16138 0.00520446 2.89289e-05 1.03207 0.0316195
+    3117.5 0.73513 699.6 2.12736 0.00592644 3.79867e-05 1.03137 0.031617
+    3118 0.68428 691.4 2.08802 0.00553673 3.66859e-05 1.03065 0.0316145
+    3118.5 0.62612 657.1 2.07742 0.00585822 3.31559e-05 1.02995 0.031612
+    3119 0.57901 651.1 2.05508 0.00566154 2.58984e-05 1.02924 0.0316096
+    3119.5 0.52452 663.1 2.02384 0.00587139 2.8802e-05 1.02853 0.031607
+    3120 0.47456 662.5 1.98556 0.00608487 3.67603e-05 1.02783 0.0316045
+    3120.5 0.42078 652.7 1.97529 0.00559894 2.93649e-05 1.02711 0.031602
+    3121 0.36082 651.5 1.95722 0.00562278 2.55255e-05 1.02641 0.0315995
+    3121.5 0.31938 707.6 1.94067 0.00595102 3.13165e-05 1.02571 0.031597
+    3122 0.25569 766.2 1.92368 0.00572124 3.15917e-05 1.025 0.0315945
+    3122.5 0.19734 838.7 1.91452 0.00515281 2.0071e-05 1.0243 0.031592
+    3123 0.15553 881.5 1.89113 0.00551116 3.28339e-05 1.0236 0.0315895
+    3123.5 0.11727 814.6 1.87701 0.00542812 3.03741e-05 1.02289 0.0315871
+    3124 0.080344 728.7 1.86317 0.00554423 3.10073e-05 1.02219 0.0315845
+    3124.5 0.064955 678 1.83571 0.00563416 3.2124e-05 1.02149 0.031582
+    3125 0.044418 678.3 1.81505 0.00558078 2.89767e-05 1.02079 0.0315795
+    3125.5 0.030995 729.9 1.78523 0.00594756 3.64571e-05 1.02009 0.0315771
+    3126 0.02283 776.3 1.76935 0.00570271 3.4625e-05 1.01939 0.0315746
+    3126.5 0.014522 798.4 1.77117 0.00520717 2.21895e-05 1.01869 0.0315721
+    3127 0.0080914 785.5 1.7638 0.00552626 2.60438e-05 1.01799 0.0315695
+    3127.5 0.0040933 767.6 1.74483 0.00534872 2.46873e-05 1.01729 0.031567
+    3128 0.0012785 790.4 1.7321 0.00550841 2.98786e-05 1.0166 0.0315645
+    3128.5 0.00062804 808.6 1.71683 0.00528273 2.82694e-05 1.0159 0.031562
+    3129 0.00010066 783 1.71587 0.00548721 2.66073e-05 1.0152 0.0315596
+    3129.5 5.4924e-05 754 1.72143 0.00495199 2.25127e-05 1.0145 0.031557
+    3130 0 759.6 1.70291 0.00521254 2.59546e-05 1.01382 0.0315545
 
-Files called ``stdjacmsc.dat`` are MS correction Jacobian (12x61) + ozone profile (1x61).
-Each block of 13 lines is for one of 21 standard profiles (3 of low latitudes, 8 of middle 
-latitudes, and 10 of high latitudes sets). They are used to correct MS tables for change in 
-ozone profile dMSC=dN/dx*(X_new-X_std).
-
-File "totoz_press.dat" contains ozone in layer 0 for 21 standard profiles. This info is used 
-when pressure interpolation is needed. Since TO is measured above pressure level of the 
-station, the table helps to adjust measured TO to the sea level. Thus the appropriate 
-standard ozone profile (defined by its TO at the sea-level) can be chosen.
-File "coef_dobacdh.dat" and "coef_dobacdl.dat" are part of Bass and Paur tables for 
-wavelengths within band-passes for A, C, D pairs. There are 3 blocks in high and low 
-wavelengths data (3x161 and 3x61 respectively).
-The line format is as following: 
-wavelength \*10 (nm), quadrature weights (from 0 to 1) , ET solar flux (W/m2/sec),
-alfa0, alfa1, alfa2, beta, de-polarization coefficient
-3215 0 786.6 0.453706 0.00229443 1.0219e-05 0.903854 0.0311156
-where ozone absorption coefficient=alfa0+alfa1\*Temp+alfa2\*Temp\*Temp,
-beta is Rayleigh extinction coefficient.
 
 
-
-stdjacmsc.dat
--------------
-
-LINE 197
-READ MULTIPLE SCATTERING CORRECTIONS JACOBEAN, Array (61,13,21)
-19 stdjacmsc.dat
-
-nrl.dat
--------
-
-Line 205
-Read in NRL temperature/altitude climatology for monthly mean and zonal
-C averaged profiles
-
-Array( 12,45, 19)
-15 nrl.dat
-
-coef_dobcl.dat
---------------
-
-Line 129
-READ spectral parameters
-Lambda, slit function, ET flux, alfa0, alfat, alfatt, beta, rho
-
-98 coef_dobcl.dat
+..  _coef_dobch.dat:
 
 coef_dobch.dat
 --------------
-97 coef_dobch.dat
+  See :ref:`coef_dobcl.dat` for a description of the file contents::
+
+    read(98,*)alamw(i),sfw(i),etfw(i),alfaw(i),acoftw(i), acoftsw(i),betaw(i),rhow(i)
+
+The contents of the default file::
+
+    3290 0 1118 0.148968 0.00115126 3.72487e-06 0.819191 0.0306657
+    3290.5 0.0089819 1086 0.145731 0.00122118 4.43796e-06 0.818661 0.0306627
+    3291 0.011956 1101 0.139811 0.00124616 5.25976e-06 0.81813 0.0306597
+    3291.5 0.018126 1143 0.134737 0.00117307 4.26382e-06 0.8176 0.0306567
+    3292 0.025195 1184 0.129985 0.00123491 5.14218e-06 0.81707 0.0306537
+    3292.5 0.025083 1248 0.125366 0.00118222 4.73429e-06 0.816542 0.0306507
+    3293 0.031268 1236 0.121926 0.00117392 5.18151e-06 0.816013 0.0306477
+    3293.5 0.041967 1166 0.118108 0.00108301 4.39264e-06 0.815485 0.0306447
+    3294 0.047918 1140 0.115192 0.00113437 5.4088e-06 0.814957 0.0306417
+    3294.5 0.052979 1155 0.113274 0.00107172 4.54336e-06 0.81443 0.0306387
+    3295 0.063243 1186 0.11044 0.00100717 4.59676e-06 0.813903 0.0306357
+    3295.5 0.074294 1222 0.109572 0.00103206 5.01293e-06 0.813376 0.0306327
+    3296 0.092862 1219 0.111288 0.000969482 4.53497e-06 0.81285 0.0306297
+    3296.5 0.098993 1161 0.1123 0.000963049 4.70574e-06 0.812325 0.0306267
+    3297 0.1097 1142 0.110383 0.000972578 5.3365e-06 0.8118 0.0306237
+    3297.5 0.11868 1134 0.111313 0.00093189 4.52703e-06 0.811275 0.0306207
+    3298 0.13938 1234 0.109829 0.000914115 3.98463e-06 0.81075 0.0306177
+    3298.5 0.15393 1313 0.107803 0.000866916 3.76938e-06 0.810226 0.0306147
+    3299 0.17392 1373 0.108001 0.000871092 3.37604e-06 0.809702 0.0306117
+    3299.5 0.18962 1357 0.104201 0.000880652 4.30409e-06 0.809179 0.0306087
+    3300 0.22272 1319 0.104041 0.000823021 3.29409e-06 0.808656 0.0306057
+    3300.5 0.24065 1143 0.104962 0.000847647 4.08735e-06 0.808133 0.0306027
+    3301 0.26567 1032 0.107658 0.000854417 5.32945e-06 0.807612 0.0305998
+    3301.5 0.28709 997 0.111911 0.000871334 5.93243e-06 0.80709 0.0305962
+    3302 0.32352 1046 0.123426 0.000792574 6.46653e-06 0.806571 0.0305957
+    3302.5 0.34461 1092 0.147232 0.000671381 7.0822e-06 0.806057 0.0306006
+    3303 0.37721 1085 0.167367 0.000590955 5.91569e-06 0.80554 0.0305998
+    3303.5 0.40876 1020 0.174532 0.000681217 6.90953e-06 0.805023 0.0306
+    3304 0.43194 896.3 0.17956 0.0006449 6.11543e-06 0.804506 0.0306
+    3304.5 0.46383 789 0.18054 0.000681728 5.50913e-06 0.803989 0.0306
+    3305 0.49206 783.3 0.178913 0.000708639 4.5216e-06 0.803474 0.0306
+    3305.5 0.51974 825 0.177288 0.000757571 4.45449e-06 0.802959 0.0306
+    3306 0.54947 892 0.173745 0.000779351 4.75081e-06 0.802444 0.0306
+    3306.5 0.57024 977 0.170324 0.000711924 2.41205e-06 0.801929 0.0306
+    3307 0.60147 1045 0.165277 0.000765053 3.00316e-06 0.801414 0.0306
+    3307.5 0.61951 1077 0.157336 0.000827562 4.73549e-06 0.800901 0.0306
+    3308 0.65108 1085 0.155753 0.000763641 3.56159e-06 0.800387 0.0306
+    3308.5 0.67463 1068 0.155135 0.000793736 4.43211e-06 0.799874 0.0306
+    3309 0.70159 1051 0.153079 0.000791022 5.95481e-06 0.799361 0.0306
+    3309.5 0.72355 1081 0.167116 0.000685337 5.73891e-06 0.79885 0.0306
+    3310 0.75234 1086 0.190786 0.000535755 5.61639e-06 0.798338 0.0306
+    3310.5 0.76499 1053 0.203374 0.000431168 3.97494e-06 0.797826 0.0306
+    3311 0.80143 1005 0.214504 0.000536559 3.62035e-06 0.797315 0.0306
+    3311.5 0.82421 1005 0.213993 0.000543835 4.05489e-06 0.796805 0.0306
+    3312 0.83887 969.1 0.208221 0.000647466 5.26936e-06 0.796295 0.0306
+    3312.5 0.86467 929 0.203149 0.000727216 4.32153e-06 0.795785 0.0306
+    3313 0.87142 880.1 0.198639 0.000687987 2.95543e-06 0.795275 0.0306
+    3313.5 0.8899 888.9 0.191048 0.000738207 4.41288e-06 0.794766 0.0306
+    3314 0.90137 953.3 0.181531 0.000719409 3.49358e-06 0.794258 0.0306
+    3314.5 0.91531 1011 0.174102 0.000769348 2.65975e-06 0.79375 0.0306
+    3315 0.9266 1048 0.164294 0.000701016 1.63936e-06 0.793242 0.0306
+    3315.5 0.94413 1068 0.153474 0.000761227 2.86224e-06 0.792735 0.0306
+    3316 0.95296 1091 0.150096 0.000789404 2.47586e-06 0.792228 0.0306
+    3316.5 0.95824 1106 0.143815 0.000817729 3.09667e-06 0.791721 0.0306
+    3317 0.96876 1106 0.136053 0.000868951 3.51687e-06 0.791215 0.0306
+    3317.5 0.97393 1098 0.130076 0.000825736 2.36022e-06 0.790709 0.0306
+    3318 0.97894 1060 0.122818 0.000904433 4.05149e-06 0.790204 0.0306
+    3318.5 0.9826 1047 0.119127 0.000840985 3.21058e-06 0.789699 0.0306
+    3319 0.98873 1037 0.113002 0.000903958 4.19565e-06 0.789195 0.0306
+    3319.5 0.99387 1052 0.106563 0.000843845 3.62653e-06 0.78869 0.0306
+    3320 0.99093 1063 0.10211 0.000828093 3.39055e-06 0.788186 0.0306
+    3320.5 0.9951 993.2 0.0973079 0.000764136 2.75188e-06 0.787683 0.0306
+    3321 0.99799 890.1 0.0934666 0.000770346 3.23681e-06 0.78718 0.0306
+    3321.5 0.99894 829.8 0.0888475 0.000794472 3.65207e-06 0.786677 0.0306
+    3322 0.99905 817.2 0.084646 0.000721476 2.97108e-06 0.786175 0.0306
+    3322.5 0.9999 865.3 0.0809188 0.000735299 3.16806e-06 0.785674 0.0306
+    3323 0.99999 942.7 0.0791909 0.000739773 3.38e-06 0.785173 0.0306
+    3323.5 0.99999 1053 0.0768534 0.000715342 2.99713e-06 0.784671 0.0306
+    3324 0.99999 1131 0.0731509 0.000740777 3.54564e-06 0.784171 0.0306
+    3324.5 0.99999 1173 0.0709161 0.000735777 3.70061e-06 0.78367 0.0306
+    3325 0.99999 1119 0.0680251 0.000771438 4.60521e-06 0.783171 0.0306
+    3325.5 0.99999 1034 0.0679931 0.00069333 3.37336e-06 0.782671 0.0306
+    3326 0.99899 1019 0.067997 0.000644132 2.31771e-06 0.782172 0.0306
+    3326.5 0.99793 1018 0.0657347 0.000634961 2.98188e-06 0.781674 0.0306
+    3327 0.996 999.1 0.0654544 0.000649083 3.31403e-06 0.781176 0.0306
+    3327.5 0.995 890.9 0.0639234 0.000651371 3.99599e-06 0.780678 0.0306
+    3328 0.99399 865.3 0.0649263 0.000662007 4.4706e-06 0.78018 0.0306
+    3328.5 0.99381 897.9 0.0672188 0.000634545 4.15629e-06 0.779683 0.0306
+    3329 0.98774 1008 0.0696855 0.000595748 3.92621e-06 0.779186 0.0306
+    3329.5 0.98212 1069 0.0701652 0.000588034 4.72249e-06 0.77869 0.0306
+    3330 0.97461 1042 0.0743221 0.000535572 3.30928e-06 0.778194 0.0306
+    3330.5 0.97063 1031 0.0753265 0.000585892 4.06953e-06 0.777699 0.0306
+    3331 0.96047 1061 0.0768126 0.000622576 4.3683e-06 0.777204 0.0306
+    3331.5 0.94961 1092 0.0796035 0.000652399 4.14225e-06 0.776709 0.0306
+    3332 0.94049 1056 0.082734 0.000700278 4.07086e-06 0.776215 0.0306
+    3332.5 0.92628 1028 0.0822802 0.000734302 4.34256e-06 0.775721 0.0306
+    3333 0.91394 985.4 0.0832793 0.00073656 4.06079e-06 0.775227 0.0306
+    3333.5 0.89118 911.4 0.0830485 0.000708567 3.80012e-06 0.774734 0.0306
+    3334 0.87176 824.7 0.0836202 0.000682044 3.81012e-06 0.774241 0.0306
+    3334.5 0.85737 755.9 0.0847846 0.000686881 4.43234e-06 0.773749 0.0306
+    3335 0.83924 742.3 0.090248 0.000643084 4.49294e-06 0.773257 0.0306
+    3335.5 0.82321 761.8 0.0993961 0.000599956 4.82954e-06 0.772766 0.0306
+    3336 0.81227 829.4 0.112502 0.000515515 4.97639e-06 0.772274 0.0306
+    3336.5 0.79104 928 0.129182 0.000379466 4.30957e-06 0.771783 0.0306
+    3337 0.76895 995.7 0.139669 0.000349655 4.13968e-06 0.771293 0.0306
+    3337.5 0.73962 1029 0.144912 0.000368833 3.36786e-06 0.770803 0.0306
+    3338 0.7089 1017 0.146258 0.000381721 2.84263e-06 0.770313 0.0306
+    3338.5 0.68395 995.5 0.144345 0.000512943 4.74955e-06 0.769823 0.0306
+    3339 0.67227 989 0.143369 0.000532323 4.02349e-06 0.769335 0.0306
+    3339.5 0.63845 1026 0.140875 0.000602729 3.85737e-06 0.768847 0.0306
+    3340 0.61434 971.9 0.135202 0.000588404 2.69554e-06 0.768359 0.0306
+    3340.5 0.58469 925.9 0.129508 0.00062401 3.16645e-06 0.767871 0.0306
+    3341 0.56159 933.8 0.123913 0.000670296 3.9224e-06 0.767383 0.0306
+    3341.5 0.54084 993.6 0.118976 0.000658918 3.08634e-06 0.766896 0.0306
+    3342 0.52263 1064 0.113022 0.000652872 2.77095e-06 0.766409 0.0306
+    3342.5 0.49832 1105 0.104612 0.000719137 4.31831e-06 0.765923 0.0306
+    3343 0.46867 1125 0.10066 0.000675957 3.23076e-06 0.765437 0.0306
+    3343.5 0.45097 1116 0.0947429 0.000649436 3.59204e-06 0.764952 0.0306
+    3344 0.42902 1132 0.0905252 0.000700555 4.16615e-06 0.764467 0.0306
+    3344.5 0.39675 1130 0.0870936 0.000649712 3.28541e-06 0.763982 0.0306
+    3345 0.38594 1109 0.0836413 0.000664112 3.35138e-06 0.763498 0.0306
+    3345.5 0.3495 1102 0.0804269 0.000601313 2.56243e-06 0.763014 0.0306
+    3346 0.333 1090 0.0785755 0.000646596 3.63e-06 0.76253 0.0306
+    3346.5 0.31274 1048 0.0768871 0.000623394 3.3083e-06 0.762047 0.0306
+    3347 0.29528 900.6 0.0735071 0.000609232 3.19998e-06 0.761564 0.0306
+    3347.5 0.27109 746.9 0.0719306 0.000618625 3.22613e-06 0.761081 0.0306
+    3348 0.25523 706.9 0.068934 0.000592716 2.91719e-06 0.7606 0.0306
+    3348.5 0.22912 774 0.0656105 0.000583078 2.92703e-06 0.760118 0.0306
+    3349 0.20357 930.9 0.0617745 0.000527786 2.62028e-06 0.759637 0.0306
+    3349.5 0.18742 1058 0.0589694 0.000527843 2.60512e-06 0.759156 0.0306
+    3350 0.17155 1102 0.0569271 0.000489986 1.80186e-06 0.758675 0.0306
+    3350.5 0.15124 1118 0.0526769 0.000492679 2.35321e-06 0.758195 0.0306
+    3351 0.14426 1135 0.0509259 0.000548721 2.9592e-06 0.757716 0.0306
+    3351.5 0.1179 1131 0.0478616 0.000552561 3.65273e-06 0.757236 0.0306
+    3352 0.10863 1090 0.045326 0.000517875 3.5098e-06 0.756757 0.0306
+    3352.5 0.090715 1052 0.0423357 0.000511358 3.72246e-06 0.756278 0.0306
+    3353 0.080345 1051 0.0428492 0.000539003 3.45314e-06 0.7558 0.0306
+    3353.5 0.054048 1099 0.0427362 0.000511549 3.00979e-06 0.755322 0.0306
+    3354 0.049622 1167 0.0410828 0.000510692 3.16144e-06 0.754844 0.0306
+    3354.5 0.037976 1190 0.0396968 0.000491528 3.02447e-06 0.754367 0.0306
+    3355 0.03015 1168 0.0397358 0.000515893 3.06437e-06 0.753891 0.0306
+    3355.5 0.023452 1159 0.0395488 0.000486664 2.64302e-06 0.753414 0.0306
+    3356 0.021907 1148 0.039466 0.000469109 2.51229e-06 0.752938 0.0306
+    3356.5 0.019985 1062 0.0387209 0.000456577 2.81083e-06 0.752463 0.0306
+    3357 0.014061 927.1 0.0392547 0.00047796 2.71116e-06 0.751987 0.0306
+    3357.5 0.0096556 749.9 0.03773 0.000432746 2.27277e-06 0.751512 0.0306
+    3358 0.0051252 657.3 0.037021 0.000428604 2.29629e-06 0.751037 0.0306
+    3358.5 0.0010488 578.1 0.0365808 0.000483707 3.29182e-06 0.750563 0.0306
+    3359 0.00092725 527 0.0349851 0.000443358 2.8718e-06 0.750089 0.0306
+    3359.5 0.0008039 454.2 0.0347458 0.000477934 3.36043e-06 0.749616 0.0306
+    3360 0 484.2 0.0366 0.000498067 3.41447e-06 0.749143 0.0306
+
 
 Line 162
 READ spectral parameters
 Lambda, slit function, ET flux, alfa0, alfat, alfatt, beta, rho
 
+..  _totoz_press.dat:
+
 totoz_press.dat
 ---------------
-Line 188, C READ Total ozone at pressure levels 0.5, 0.8, 0.7, 0.9
-Array(21)
-79 totoz_press.dat
+The file contains ozone in layer 0 for 21 standard profiles. This info is used when pressure interpolation is needed.
+Since TO is measured above pressure level of the station, the table helps to adjust measured TO to the sea level.
+Thus the appropriatestandard ozone profile (defined by its TO at the sea-level) can be chosen::
+
+    0.21000 0.26010 0.31010 0.21000 0.26000 0.30980 0.35990 0.41000 0.46000 0.51010 0.56000 0.11100 0.16090 0.21090 0.26090 0.31090 0.36090 0.41100 0.46090 0.51180 0.56060
+    0.21955 0.26965 0.31962 0.21959 0.26964 0.31946 0.36956 0.41965 0.46965 0.51976 0.56965 0.11979 0.16974 0.21978 0.26983 0.31987 0.36990 0.42006 0.47009 0.52117 0.57020
+    0.21655 0.26666 0.31660 0.21655 0.26664 0.31649 0.36658 0.41666 0.46666 0.51678 0.56667 0.11682 0.16682 0.21690 0.26698 0.31705 0.36711 0.41732 0.46746 0.51867 0.56789
+    0.21955 0.26965 0.31962 0.21959 0.26964 0.31946 0.36956 0.41965 0.46965 0.51976 0.56965 0.11979 0.16974 0.21978 0.26983 0.31987 0.36990 0.42006 0.47009 0.52117 0.57020
 
 
+.. _unit21_output:
 
-output
-------
+Unit 21 output
+--------------
+No documentation is available for Unit 21 output. The stream is captured by the Python interface but is normally discarded::
 
-Feb 10, 2006
-Final stage of reprocessing Umkehr data using FAP03 algorithm.
-name: STN##_SZA.swfgztw_sevar_out, SZA is normalization angle
-Description of files:
-STN014-Tateno
-STN035-Arosa
-STN067-Boulder
+          WRITE(21,7000) (ID(I),I=3,6),LAM,KB,KE,ID(7),IOMEGA,(NINT(VNFG(K)*10),K=1,12),ISTN
+     7000 FORMAT (3I2,A1,I1,I2,I2,A2,3I4,10I5,I3)
 
-Example of file for Arosa::
+Typical example output::
 
-    0     SOLUTION STATISTICS FOR  5337 PROFILES
-     TOTAL OZONE   OBSERVED= 311.4 +/-    0.0     SOLUTION= 310.5 +/-    0.0
-     AVERAGE RESIDUAL= 0.30 +/-  0.14          TOTAL ITERATIONS=****
-     LAYER     61     60     59     58     57     56     55     54     53     52     51     50     49     48     47     46     45     44     43     42     41     40     39     38     37     36     35     34     33     32     31     30     29     28     27     26     25     24     23     22     21     20     19     18     17     16     15     14     13     12     11     10      9      8      7      6      5      4      3      2      1
-     AVE DU     0.12E-05  0.54E-06  0.78E-06  0.11E-05  0.16E-05  0.24E-05  0.34E-05  0.50E-05  0.71E-05  0.10E-04  0.15E-04  0.22E-04  0.32E-04  0.47E-04  0.68E-04  0.96E-04  0.13E-03  0.17E-03  0.22E-03  0.28E-03  0.37E-03  0.50E-03  0.67E-03  0.89E-03  0.12E-02  0.16E-02  0.20E-02  0.26E-02  0.32E-02  0.40E-02  0.48E-02  0.58E-02  0.69E-02  0.80E-02  0.93E-02  0.11E-01  0.12E-01  0.14E-01  0.15E-01  0.16E-01  0.17E-01  0.18E-01  0.18E-01  0.17E-01  0.16E-01  0.14E-01  0.12E-01  0.11E-01  0.94E-02  0.84E-02  0.76E-02  0.67E-02  0.57E-02  0.48E-02  0.41E-02  0.37E-02  0.35E-02  0.37E-02  0.41E-02  0.48E-02  0.00E+00
-     DEV DU  0.20E-06  0.67E-07  0.88E-07  0.11E-06  0.14E-06  0.18E-06  0.22E-06  0.26E-06  0.30E-06  0.33E-06  0.37E-06  0.48E-06  0.83E-06  0.16E-05  0.31E-05  0.56E-05  0.92E-05  0.14E-04  0.22E-04  0.33E-04  0.50E-04  0.78E-04  0.11E-03  0.16E-03  0.22E-03  0.28E-03  0.34E-03  0.41E-03  0.47E-03  0.53E-03  0.61E-03  0.73E-03  0.89E-03  0.11E-02  0.12E-02  0.13E-02  0.14E-02  0.15E-02  0.16E-02  0.19E-02  0.23E-02  0.28E-02  0.32E-02  0.36E-02  0.36E-02  0.35E-02  0.32E-02  0.30E-02  0.30E-02  0.32E-02  0.32E-02  0.29E-02  0.23E-02  0.15E-02  0.11E-02  0.10E-02  0.11E-02  0.11E-02  0.11E-02  0.12E-02  0.00E+00
-     ERROR   0.4E-04   0.2E-04   0.2E-04   0.4E-04   0.5E-04   0.8E-04   0.1E-03   0.2E-03   0.2E-03   0.3E-03   0.5E-03   0.7E-03   0.1E-02   0.1E-02   0.2E-02   0.3E-02   0.4E-02   0.5E-02   0.7E-02   0.8E-02   0.1E-01   0.1E-01   0.2E-01   0.2E-01   0.3E-01   0.3E-01   0.4E-01   0.5E-01   0.6E-01   0.8E-01   0.9E-01   0.1E+00   0.1E+00   0.1E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.3E+00   0.3E+00   0.3E+00   0.3E+00   0.3E+00   0.3E+00   0.3E+00   0.3E+00   0.2E+00   0.2E+00   0.2E+00   0.2E+00   0.1E+00   0.1E+00   0.1E+00   0.9E-01   0.8E-01   0.7E-01   0.7E-01   0.8E-01   0.9E-01   0.1E+00   0.0E+00
-     VARED -0.402E+14-0.140E+15-0.467E+14-0.183E+14-0.741E+13-0.289E+13-0.859E+12-0.199E+12-0.441E+11-0.828E+11 0.100E+01 0.100E+01-0.246E+03-0.571E+05 0.482E+06 0.440E+05 0.818E+00-0.160E+03-0.141E+05-0.639E+05 0.209E+05 0.813E+00-0.873E+02 0.959E+03-0.215E+04 0.104E+04 0.923E+00-0.170E+02-0.221E+03 0.210E+03 0.100E+01 0.105E+01 0.989E+01-0.201E+01-0.109E+02 0.100E+01 0.126E+01-0.787E+01 0.135E+02-0.147E+01 0.100E+01 0.116E+01 0.376E+01-0.403E+01 0.100E+01 0.989E+00-0.269E+01 0.648E+01 0.482E+01 0.999E+00-0.178E+00 0.228E+02-0.673E+02 0.132E+02 0.994E+00-0.474E+01-0.380E+03-0.850E+03 0.100E+01 0.100E+01 0.000E+00
+    4 18813 312 0 325  -1  -1  720  861  997 1155 1307 1369 1380 1359 1329 1286 35
+    6 18813 312 0 320  -1  -1  710  850  984 1143 1297 1363 1375 1355 1324 1281 35
+    8 18813 312 0 374  -1  -1  825  975 1114 1265 1390 1430 1429 1402 1371 1329 35
 
-    The output is given in 61 layers (top to bottom), where each layer is 1/4 of traditional umkehr layer (total of 16).
-    AVE DU is average ozone profile for all 5337 profiles in data file
-    DEV DU is standard deviation in retrieved profiles around average profile.
-    ERROR is mean of ESTIMATED ERROR OF FINAL SOLUTION IN EACH LAYER, called SERX ( after Rodgers, 1976, eq. 22)
-        SERX is sqrt(AVARS)*100, where AVARS(I,K)=COVF(I,K)-SUM(AKTF(I,J)*AKSX(J,K), j=1,MEQ), I=1,NCP1, K=1, NCP1
-        COVF is profile covariance matrix (Sx),
-        AKSX =K*Sx (or product of Jacobian dN/dX and co-variance of a priori),
-        AKTF=Sx*K^T*(K *SX* K^T+ Se)^-1 (or called Gy in Rodgers 2000, sensitivity of the retrieval to measurement error),
-        where AKTF*K is Averaging Kernel
-    VARED is reduction in variance or difference between apriori Sx and total error of solution (smoothing and measurement errors)
-        VARED = mean of (COVF(I,I)-AKTSEKI(I,I))/COVF(I,I), where I - diagonal element of the covariance meatrix
-        COVF is a priori covariance matrix,
-        AKTSEKI is (K *SX* K^T+ Se)^-1, and AKTF*K is AK=Sx*K^T*K*(K *SX* K^T+ Se)^-1 =Sx*(K *SX* K^T+ Se)^-1
 
-FAP03 Algorithm
----------------
-Jan 5, 2004
-Final stage of reprocessing Umkehr data using FAP03 algorithm.
+.. _unit22_output:
 
-RT - retrieved (using Umkehr Dobson C-pair retrieval algorithm UMKV8)
-OBS - observed Umkehr measurements (so-called N-values)
-SZA - solar zenith znagle
+Unit 22 output
+--------------
+No documentation is available for Unit 22 output. The stream is captured by the Python interface but is normally discarded::
 
-Description of files:
-STN014-Tateno
-STN035-Arosa
-STN067-Boulder
+          WRITE(22,8102)(ID(I),I=3,5),OMOBS*1000,TDX12*1000,(TDX(i)*1000,i=5,16)
+     8102 FORMAT (3I4,F8.1,13(F9.4))
 
-'ap' means a priori
-'fap' means fixed a priori (no seasonal cycle)
-60 or 70 means that data werer normalized to the measurement at either 60 or 70-degrees SZA
+Typical example output::
 
-Format of the RT file::
+   4   1  88   325.0   0.1007   0.3680   1.2047   3.9818  10.6847  20.8659  37.6171  65.8788  77.5109  51.0454  28.2281  12.0546   8.8256
+   6   1  88   320.0   0.1008   0.3679   1.2034   3.9749  10.6738  20.8871  37.6470  65.9162  77.8131  51.3859  28.6171  12.1146   8.8519
+   8   1  88   374.0   0.1009   0.3677   1.2019   3.9672  10.6619  20.9106  37.6831  65.9556  78.1083  51.7184  29.0027  12.1770   8.8808
 
-    DD MM YY M/A LAM TO_OB TO_RT LO3(10:1)*100 NUMIT SZA_b SZA_num RMSD(DIF) RMSD(CONV) RMSD(err) STN_num
-      1  8 57 2 3  279  2827   116   191   677  2607  5158  7266  6210  2528   988  2525 3 3 10   1   3   48  14
-    DD is day
-    MM is month
-    YY is year
-    M/A is morning or afternoon (1/2)
-    TO_OB is observed total ozone (TO)
-    TO_RT is retrieved TO
-    LO3(10:1) is 100*ozone amount (DU*100) in Umkehr layers 10, 9,...1 (layer 1 is a double layer 0+1)
-    NUMIT is number of iterations
-    SZA_b is the SZA number for the first available measurement (1 is 60, 2 is 65, 3 is 70 etc)
-    SZA_nub is the number of measurements (12 is the maximum number)
-    RMSD(DIF) is the root-mean squar deviation (RMSD) of the difference from the solution from the previous iteration
-    RMSD(CON) the the RMSD of the convergency of the forcing factor
-    RMSD(err) is the the RMSD of the residual fit (difference between OB and RT N-values)
-    STN_num station number
 
-Format of the AP file::
+.. _unit25_output:
 
-    DD MM YY TO_OB LO3(12:0)
-     1   8  57   279.0   0.1042   0.3372   0.9891   2.9847   9.7834  25.9466  52.5572  74.3062  60.6886  25.8584  11.3458  13.8404  23.6888
+Unit 25 output
+--------------
+Not much documentation is available for Unit 25 output. It calculates final residuals and includes VALNTC (temp corr.)
+in the final residuals. The stream is captured by the Python interface but is normally discarded::
 
-Detailed Description of three errors: 
-DIF ( or DFRMS in the code), CON (or FEPS), ERR (or RMSRES). They are printed out as (value \*100 +0.5), except that the fisrt one is (value*1000 +0.5)
+    WRITE(25,*) (ID(I),I=3,5),KB,KE, IOMEGA,SUMSOL,(FRES(K),K=1,12)
 
-DIF is the root-mean squar deviation (RMSD) of the relative change in the solution (profile) from the previous iteration (ratio of the difference over the solution from the previous step). 
-The condition to stop iteration is that DFRMS is less than 0.01 or less than 1 % change.
+Typical example output::
 
-CON is the RMSD of the convergency of the forcing factor (or difference between FORSHD and DYMKDX, where FORSHD contains values of DYMKDX from the previous step of iterations),
-The forcing factor is calculated in
-DYMKDX=(N_observed-N_retrieved) - dN/dX\*(X_retrieved-X_apriori),
-where dN/dX is Jacobian, the term is called FEPS in the program and is RMSD of the sum over all SZA.
-Condition to stop iteration is that FEPS is less than 0.15, which is a mean value of measurement errors in N-values
+           4           1          88           3          12         325  0.32336464468496973        999.00000000000000        999.00000000000000        2.0107669931556647        2.1814199263560159        2.3289231309892586        2.2263359275628836        1.9383416131953006        1.8286000031088685        1.9175479548215182        2.1138862564538070        2.2122781882696119        2.1221549009795964
+           6           1          88           3          12         320  0.31900107061578059        999.00000000000000        999.00000000000000        2.1848051031917475        2.3645192422472339        2.4305738471585570        2.3468756479840320        2.0228075903652267        1.9805928697472368        2.2068642872409736        2.3664602788434785        2.3435984513831207        2.1537744979191316
+           8           1          88           3          12         374  0.37225417518614184        999.00000000000000        999.00000000000000        1.8390333291233165        2.0777565437695547        2.1241641380068232        2.0437291222080010        1.8566460817514805        1.6578984980024274        1.6633885713889591        1.9138975583869304        2.0743685353647936        2.1615856738746837
 
-ERR is the the RMSD of the residual fit (difference between observed  and retrieved N-values). There is no condition to stop iteration. You can use this parameter to decide if you like the conversion.
-Typically I advise users to accept everything below 100. If it happens to be larger, than most likely you will have more thnan 3 iterations (2 and 3 are good profiles).
+.. _unit31_output:
+
+Unit 31 output
+--------------
+Not much documentation is available for Unit 31 output. It prints the final resuts for the UMNKEHR retrieval. The
+stream is captured by the Python interface but is normally discarded::
+
+    write(31,*)(DXNN(I),I=1,NCP1)
+
+Typical example output::
+
+   9.9901642540140199E-007   4.6572775266426730E-007   6.8568734327694091E-007   1.0093942483204873E-006   1.4850198837177403E-006   2.1823949438118062E-006   3.2022374703123101E-006   4.6889826481492481E-006   6.8484206261268767E-006   9.9862507816399330E-006   1.4623198944484669E-005   2.1573469889926589E-005   3.2133974954923183E-005   4.8149938597124464E-005   7.0981398136888086E-005   1.0161609349904050E-004   1.3976798082110086E-004   1.8416975883736787E-004   2.3992586357417080E-004   3.1477615157332806E-004   4.2048741681605583E-004   5.7287650158718265E-004   7.7708786664933084E-004   1.0401943178003355E-003   1.3691079930426178E-003   1.7673299702025511E-003   2.2424979882553395E-003   2.7933801011147778E-003   3.4041436599326199E-003   4.0541163495444133E-003   4.7698566970405323E-003   5.5721523257513794E-003   6.4789623359302537E-003   7.5077257260783891E-003   8.6449275721651921E-003   9.8927245349220826E-003   1.1278409389329482E-002   1.2800980803753600E-002   1.4251573758843948E-002   1.5522412583230425E-002   1.6554271041187878E-002   1.7298994411809532E-002   1.7819618929465816E-002   1.7997674524102673E-002   1.7562035276381286E-002   1.6337793939598038E-002   1.4783496731397696E-002   1.3220984465270090E-002   1.1900630153193030E-002   1.0923961457285901E-002   9.8261708554191109E-003   8.5026388789406770E-003   7.0032936981655218E-003   5.4564610537117513E-003   4.2030884733680086E-003   3.3707684855425833E-003   2.9906840048707344E-003   3.0719552086446791E-003   3.6078524122612416E-003   4.5720518314112581E-003
+   1.0012626166538232E-006   4.6642555568488792E-007   6.8645576797466617E-007   1.0101020022089704E-006   1.4853630820591705E-006   2.1817401679801975E-006   3.1993398777057594E-006   4.6814871807979987E-006   6.8319911510137429E-006   9.9530231410044590E-006   1.4558748696904087E-005   2.1451185596095060E-005   3.1904433821925193E-005   4.7722864759647375E-005   7.0208444851644686E-005   1.0027079019451694E-004   1.3753821598588148E-004   1.8065787059565330E-004   2.3449774519552005E-004   3.0638523681132088E-004   4.0737284280778155E-004   5.5214236935411277E-004   7.4482111030954948E-004   9.9137103818480775E-004   1.2978677454893433E-003   1.6679795518231692E-003   2.1108258985889500E-003   2.6296613263182842E-003   3.2170467767573914E-003   3.8632237054198096E-003   4.6038125500766436E-003   5.4704786000371406E-003   6.4926299832013890E-003   7.6983021088530704E-003   9.0824005318148170E-003   1.0647848823755690E-002   1.2411362980952042E-002   1.4338594492845240E-002   1.6129530362702496E-002   1.7564548342885497E-002   1.8490265198669444E-002   1.8826103775225630E-002   1.8689032708453471E-002   1.8072890108228233E-002   1.6873310590810688E-002   1.5085196000406607E-002   1.3218428063591347E-002   1.1545561873742541E-002   1.0235142341415869E-002   9.3225798932468820E-003   8.3675537514805217E-003   7.2533594642760109E-003   5.9973159723309029E-003   4.6900696819071313E-003   3.6255709989530221E-003   2.9187919285133136E-003   2.6051785465995079E-003   2.7041911394597405E-003   3.2236321127721967E-003   4.1583825964681955E-003
+   1.0044715242258113E-006   4.6761281972644965E-007   6.8805773926960321E-007   1.0122435444599321E-006   1.4881919457920204E-006   2.1854193836431411E-006   3.2040273536611035E-006   4.6872920197059782E-006   6.8388892765227781E-006   9.9607175796855467E-006   1.4566453463665776E-005   2.1457095559967723E-005   3.1904712931101929E-005   4.7709740484108594E-005   7.0168246191173143E-005   1.0018343005446095E-004   1.3737984725383979E-004   1.8040668991430470E-004   2.3413337659117445E-004   3.0589661281099764E-004   4.0679126851764631E-004   5.5165054248566337E-004   7.4502635481981359E-004   9.9369134737582309E-004   1.3050302962678082E-003   1.6843770723124973E-003   2.1423217028278766E-003   2.6822156254007780E-003   3.2936205434558100E-003   3.9595638171288777E-003   4.7049959147355790E-003   5.5474813020760291E-003   6.5010469880165461E-003   7.5811180097404623E-003   8.7794936951873046E-003   1.0111168076561015E-002   1.1630010699504660E-002   1.3380511338825698E-002   1.5208190754369142E-002   1.7051477602628363E-002   1.8850980098576435E-002   2.0475584122077308E-002   2.1844757119039198E-002   2.2658526123547729E-002   2.2458017879687504E-002   2.0989984627559376E-002   1.8935011086766290E-002   1.6808485976587680E-002   1.4994650556529184E-002   1.3638376078516560E-002   1.2133875029878517E-002   1.0356968683744533E-002   8.3824580038201479E-003   6.3822580346125351E-003   4.7905724486439136E-003   3.7442612396590678E-003   3.2545277186068807E-003   3.3091131130448758E-003   3.8818389769793515E-003   4.9288021875859090E-003
+

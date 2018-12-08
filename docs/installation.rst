@@ -11,7 +11,7 @@ Install The Python Wheel
 ------------------------
 
 Most users will choose to install the package on their 64 bit Linux systems using out pre-built ``manylinux`` version.  Wheels for Python 3.6 and 3.7
-can be installed from the USASK-ARG server using::
+(Linux 64 bit only) can be installed from the USASK-ARG server using::
 
     pip install umkehr -f https:\\arg.usask.ca\wheels
 
@@ -140,7 +140,7 @@ Installing your own wheel
 -------------------------
 
 The python wheel file is a file that looks similar to ``umkehr-0.3.0-cp37-cp37m-manylinux1_x86_64.whl``. If you have this file on
-you local machine, because you either built it or downloaded it then you can install it into your python distribution using::
+your local machine (because you either built it or downloaded it) then you can install it using::
 
     pip install <wheel-name>
 
@@ -211,12 +211,12 @@ Build Issues
 ------------
 
 We have encountered build issues on one slightly out-of-date Ubuntu system where the system successfully built the wheel
-but failed during ruintime with the error::
+but failed during runtime with the error::
 
     Internal Error:get_unit() Bad internal unit KIND
 
-
-Apparently this is a not uncommon problem due to ``gfortran``/``gcc`` incompatibilities. A simple solution which works well is to create
+Apparently this is a not uncommon problem due to ``gfortran``/``gcc`` incompatibilities. This is not an issue in the pre-built ``manylinux`` wheel.
+It will only occur if you build a wheel specific to your system on a system with incompatible ``gfortran``/``gcc``.  A simple solution which works well is to create
 a virtual environment using the Anaconda ``conda`` command, install a trustworthy version of ``gcc`` and ``gfortran`` and
 activate the environment before building the wheel. For example, we create a ``conda`` environment called ``umkehr`` based upon python 3.6::
 

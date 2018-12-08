@@ -14,6 +14,7 @@ Welcome to umkehr's documentation!
    operation
    umkehr_api
    umkehr_inputs
+   appendices
 
 
 Indices and tables
