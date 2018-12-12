@@ -52,7 +52,7 @@ const char* trim_fortran_string(  const char* str, size_t len )
 
 extern "C" void CONSOLEMSG            (const char* str, size_t len)
 {
-	printf( "%s\n", (const char*) trim_fortran_string(str, len) );
+	printf( "CONSOLEMSG: %s\n", (const char*) trim_fortran_string(str, len) );
 	fflush(stdout);
 }
 

@@ -150,7 +150,7 @@ def _appendfields(fieldlist):
 #           decode_output_line
 #------------------------------------------------------------------------------
 
-def write_level2_umkehr_fortran_lines_to_csv( outputfilename: str , outputlines:List[str],  N14: woudc_CSV_input ):
+def write_level2_umkehr_fortran_lines_to_csv( outputfilename: str , outputlines:List[str],  N14: woudc_CSV_input,covariancetype:str ):
     """
     Writes the array of Fortran lines output from the UMKEHR fortran to a WOUDC Umkehr Level 2 file
 
@@ -208,18 +208,17 @@ def write_level2_umkehr_fortran_lines_to_csv( outputfilename: str , outputlines:
 
         ITER     = int( outputline[ 84:86 ] )
         KB       = int( outputline[ 86:88 ] )
-        NK       = int( outputline[ 88:91 ] )
+        KE       = int( outputline[ 88:91 ] )
         DFRMS    = int( outputline[ 91:95 ] )/1000.0
         FEPS     = int( outputline[ 95:99 ] )/100.0
         RMSRES   = int( outputline[ 99:104 ] )/100.0
         ISN      = int( outputline[ 104: ]   )
 
-        NZA         = 13-KB
-        line        = "{:4}-{:02}-{:02},{:1},{:1},{:3},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:1},U,{:1},{:2},{:.4f},{:.3f},{:.3f}".format(
-                        observationdate.year,month,day,H,W,OMOBS,OMSOL, LO3_10,LO3_09,LO3_08,LO3_07,LO3_06,LO3_05,LO3_04,LO3_03,LO3_02,LO3_01,ITER,KB,NZA,DFRMS,FEPS,RMSRES)
+        NZA         = KE
+        line        = "{:4}-{:02}-{:02},{:1},{:1},{:3},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:.2f},{:1},{},{:1},{:2},{:.4f},{:.3f},{:.3f}".format(
+                        observationdate.year,month,day,H,W,OMOBS,OMSOL, LO3_10,LO3_09,LO3_08,LO3_07,LO3_06,LO3_05,LO3_04,LO3_03,LO3_02,LO3_01,ITER,covariancetype,KB,NZA,DFRMS,FEPS,RMSRES)
         fieldheader = "Date,H,L,ColumnO3Obs,ColumnO3Retr,Layer10,Layer9,Layer8,Layer7,Layer6,Layer5,Layer4,Layer3,Layer2,Layer1,ITER,SX,SZA_1,nSZA,DFMRS,FEPS,RMSRES"
 
-        print(line)
         extcsv.add_data('C_PROFILE', line,  field= fieldheader if firsttime else None)
         firsttime=False
 

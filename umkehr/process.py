@@ -33,13 +33,13 @@ def _read_lines_from_input_file( inputfilename : str) ->Tuple[ List[str], Any]:
 #           _read_lines_from_input_file
 #------------------------------------------------------------------------------
 
-def _write_lines_to_output_file( outputfilename : str, lines: List[str], N14: Any):
+def _write_lines_to_output_file( outputfilename : str, lines: List[str], N14: Any, covariancetype:str):
 
     ok = False
     if _is_csv_file(outputfilename):
         ok = N14 is not None
         if ok:
-            write_level2_umkehr_fortran_lines_to_csv( outputfilename, lines, N14 )
+            write_level2_umkehr_fortran_lines_to_csv( outputfilename, lines, N14,covariancetype )
         else:
             print('Umkehr. Cannot write level 2 records to a CSV file without a valid Level 1 CSV object. ')
     else:
@@ -123,7 +123,7 @@ def change_umkehr_configuration_file( fortranunit : int, fullfilename : str):
 #           Level1_to_Level2
 #------------------------------------------------------------------------------
 
-def Level1_to_Level2(  level1inputfilename : str, level2outputfilename : str, KBN=3, verbose=True):
+def Level1_to_Level2(  level1inputfilename : str, level2outputfilename : str, KBN=3, verbose=True, covariancetype='R'):
     """
     Processes an Umkehr Level 1 file and writes the output to a Level 2 file.
 
@@ -163,7 +163,7 @@ def Level1_to_Level2(  level1inputfilename : str, level2outputfilename : str, KB
         for l in L4: print(l)
 
     if (verbose): print('Writing {} lines to Umkehr Level 2 file {}'.format(len(L4), level2outputfilename))
-    _write_lines_to_output_file( level2outputfilename, L4, N14)                   # Write the Level 2 records to the Umkehr Level 2 file.
+    _write_lines_to_output_file( level2outputfilename, L4, N14, covariancetype)                   # Write the Level 2 records to the Umkehr Level 2 file.
 
 
 
