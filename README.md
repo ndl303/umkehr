@@ -1,5 +1,22 @@
 # UMKEHR
 
+Copyright 2018 NOAA
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, 
+and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial 
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT 
+LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO 
+EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# Overview #
 This is the UMKEHR retrieval code provided to the WOUDC in January 2019. It is a shallow python wrapper around Fortran code that executes the Umkehr ozone retrieval algorithm described in *Petropavlovskikh, I., Bhartia, P. K. and DeLuisi, J.*: [New Umkehr ozone profile retrieval algorithm optimized for climatological studies](https://doi.org/10.1029/2005GL023323 ), *JGR 2005*. 
 
 This package can be installed as a binary Python wheel on most 64 bit Linux systems. The binary wheel used for installation can either be downloaded as a pre-built binary python wheel (64 bit Linux only, manylinux1 compatible) or can be built from the source code in this repository. The umkehr python package is not supported for python versions prior to 3.6 as we make extensive use of the *typing* features introduced in that version.

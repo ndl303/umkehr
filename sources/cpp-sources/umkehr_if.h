@@ -11,6 +11,20 @@
 #include <string>
 #include <memory>
 
+#if defined (_MSC_VER)
+
+#define DECODE_CUMKEHR_OBS		DECODE_CUMKEHR_OBS
+#define UMKEHR					UMKEHR						// C++ calls this fortran function to execute the primary UMKEHR analysis
+#define UMKEHR_SET_INPUTFOLDER	UMKEHR_SET_INPUTFOLDER		// C++ calls this fortran function to set the input folder for the UMKEHR input files
+#define UMKEHR_SET_IONAMES      UMKEHR_SET_IONAMES			// C++ calls this fortran function to the name of one of the input files
+
+#define UMKEHR_WRITE_STRING		UMKEHR_WRITE_STRING			// Fortran calls this C++ function to write output data on a given unit. It is called during execution of subroutine UMKEHR.
+#define UMKEHR_CLOSE_OUTPUT		UMKEHR_CLOSE_OUTPUT			// Fortran calls this C++ function to close a given output stream (generally does nothing for C++ as Fortran output is internally cached in memory)
+#define CONSOLEMSG				CONSOLEMSG					// Fortran calls this C++ function to writye a log message to the console
+#define UMKEHR_READ_LINE		UMKEHR_READ_LINE			// Fortran calls this C++ function to reads a line of text from an input stream.
+
+#else
+
 #define DECODE_CUMKEHR_OBS		decode_cumkehr_obs_
 #define UMKEHR					umkehr_						// C++ calls this fortran function to execute the primary UMKEHR analysis
 #define UMKEHR_SET_INPUTFOLDER	umkehr_set_inputfolder_		// C++ calls this fortran function to set the input folder for the UMKEHR input files
@@ -20,6 +34,7 @@
 #define UMKEHR_CLOSE_OUTPUT		umkehr_close_output_		// Fortran calls this C++ function to close a given output stream (generally does nothing for C++ as Fortran output is internally cached in memory)
 #define CONSOLEMSG				consolemsg_					// Fortran calls this C++ function to writye a log message to the console
 #define UMKEHR_READ_LINE		umkehr_read_line_			// Fortran calls this C++ function to reads a line of text from an input stream.
+#endif
 
 extern "C" void DECODE_CUMKEHR_OBS    ( );
 extern "C" void UMKEHR                ( int* KBN );
