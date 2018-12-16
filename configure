@@ -3394,7 +3394,7 @@ fi
 #	Export to the makefiles
 #------------------------------------------------------------------------------
 
-ac_config_files="$ac_config_files Makefile setup.py"
+ac_config_files="$ac_config_files Makefile setup.py setup.py.windows docs/conf.py"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -4103,6 +4103,8 @@ do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "setup.py") CONFIG_FILES="$CONFIG_FILES setup.py" ;;
+    "setup.py.windows") CONFIG_FILES="$CONFIG_FILES setup.py.windows" ;;
+    "docs/conf.py") CONFIG_FILES="$CONFIG_FILES docs/conf.py" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

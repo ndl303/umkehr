@@ -233,7 +233,7 @@ C                                                                       !0000153
  6002 FORMAT (114(1H*))
  6100 FORMAT (A18,1XA4,A1,2X,3I2,2X,A1,I1,1X,A2,F5.1,14I5)       
  6200 FORMAT (44X,14I5)                          
- 6300 FORMAT (44X,14I5/31X 8HERRORS - I2,5X,14(I4,A1)/45X,12I5)         !00001620
+ 6300 FORMAT (44X,14I5/31X,8HERRORS -,I2,5X,14(I4,A1)/45X,12I5)         !00001620
  7000 FORMAT (3I2,A1,I1,I2,I2,A2,3I4,10I5,I3)                           !TEMP****
  7100 FORMAT (I4,1X,A18,1X,F8.2,2F6.0)                                  !00001640
  9000 FORMAT (' ISTN=',I4,' NOT IN STATION INDEX. RUN TERMINATED.')     !00001650

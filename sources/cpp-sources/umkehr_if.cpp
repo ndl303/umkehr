@@ -27,7 +27,7 @@ void clear_io_buffers()
 /** **/
 /*---------------------------------------------------------------------------*/
 
-const char* trim_fortran_string(  const char* str, size_t len )
+const char* trim_fortran_string(  const char* str, fortran_char_int len )
 {
 	static char buffer[6000];
 	bool		iswhite = true;
@@ -50,7 +50,7 @@ const char* trim_fortran_string(  const char* str, size_t len )
 /** **/
 /*---------------------------------------------------------------------------*/
 
-extern "C" void CONSOLEMSG            (const char* str, size_t len)
+extern "C" void CONSOLEMSG            (const char* str, fortran_char_int len)
 {
 	printf( "CONSOLEMSG: %s\n", (const char*) trim_fortran_string(str, len) );
 	fflush(stdout);
@@ -61,7 +61,7 @@ extern "C" void CONSOLEMSG            (const char* str, size_t len)
 /** **/
 /*---------------------------------------------------------------------------*/
 
-extern "C" void UMKEHR_WRITE_STRING( int* JUNIT, const char* str, size_t len )
+extern "C" void UMKEHR_WRITE_STRING( int* JUNIT, const char* str, fortran_char_int len )
 {
 	std::string	line( trim_fortran_string( str, len) );
 
@@ -87,7 +87,7 @@ extern "C" void  UMKEHR_CLOSE_OUTPUT( int* JUNIT )
  **/
 /*---------------------------------------------------------------------------*/
 
-extern "C" void UMKEHR_READ_LINE( int* JUNIT, int* IEOF, char* ALINE, size_t len )
+extern "C" void UMKEHR_READ_LINE( int* JUNIT, int* IEOF, char* ALINE, fortran_char_int len )
 {
 	bool				endoffile;
 	const std::string&	line = g_fortran_input_array.GetNextReadBack( *JUNIT, &endoffile);
@@ -118,7 +118,7 @@ void write_to_input_buffer (int unit, const char* line)
 
 bool set_umkehr_inputfolder( const char* inputfolder)
 {
-	UMKEHR_SET_INPUTFOLDER( inputfolder, strlen(inputfolder) );						// Make sure UMKEHR can find the input files stored in the data folder in the package
+	UMKEHR_SET_INPUTFOLDER( inputfolder, (fortran_char_int)strlen(inputfolder) );						// Make sure UMKEHR can find the input files stored in the data folder in the package
 	return true;
 }
 
@@ -154,7 +154,7 @@ const std::list<std::string>& get_input_stream( int unit)
 
 void set_umkehr_input_filename( int unit, const char*  fullname )
 {
-	UMKEHR_SET_IONAMES( &unit, fullname, strlen(fullname) );
+	UMKEHR_SET_IONAMES( &unit, fullname, (fortran_char_int)strlen(fullname) );
 }
 
 /*-----------------------------------------------------------------------------

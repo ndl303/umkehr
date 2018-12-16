@@ -26,3 +26,5 @@ _build
 *.pyc
 wheelhouse
 /libumkehr_codelib.a
+.vs
+x64

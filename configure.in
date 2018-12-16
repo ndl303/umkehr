@@ -69,4 +69,4 @@ AC_SUBST(PYTHON_LINKLIBOPTION)
 #	Export to the makefiles
 #------------------------------------------------------------------------------
 
-AC_OUTPUT( Makefile setup.py docs/conf.py )
+AC_OUTPUT( Makefile setup.py  setup.py.windows docs/conf.py )
