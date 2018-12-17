@@ -9,7 +9,7 @@
 # I share the umkehr development folder with the docker image.
 #
 # docker run  -v C:\Users\nickl\Documents\Work\software\ARG_Packages:/packages -i -t 41c74197534c /bin/bash
-# cd /packages/umnkehr
+# cd /packages/umkehr
 # ./build_manylinux_in_docker
 #----------------------------------------------------------------------------------------------------------
 
@@ -20,6 +20,8 @@ make
 ./configure --enable-manylinux PYVERSION=3.7 PYBASEDIR=/opt/python/cp37-cp37m
 make clean
 make
+
+rm -f libumkehr_codelib.a
 
 for whl in wheelhouse/*.whl
 do

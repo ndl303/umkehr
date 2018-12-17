@@ -1,4 +1,4 @@
-AC_INIT( umkehr,0.4.0)
+AC_INIT( umkehr,0.5.0)
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -69,4 +69,4 @@ AC_SUBST(PYTHON_LINKLIBOPTION)
 #	Export to the makefiles
 #------------------------------------------------------------------------------
 
-AC_OUTPUT( Makefile setup.py  setup.py.windows docs/conf.py )
+AC_OUTPUT( Makefile setup.py docs/conf.py )

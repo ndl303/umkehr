@@ -6,7 +6,7 @@
 .for.o:
 	gfortran -fmessage-length=0 -fvisibility=hidden -shared -std=legacy -fpic -ffixed-line-length-72 -Wunused-variable -fdefault-real-8 -fdefault-double-8 -fno-automatic -c -o $@ $<
 .cpp.o:
-	g++ -O3 -std=c++11 -fvisibility=hidden -fPIC -I./ -I /opt/python/cp37-cp37m/python3.7/include -c -o $@ $<
+	g++ -O3 -std=c++11 -fvisibility=hidden -fPIC -I./ -I /opt/python/cp36-cp36m/python3.6/include -c -o $@ $<
 
 VPATH= ./:\
        sources:\
@@ -43,7 +43,7 @@ STAND_ALONE=cimpl_emulator.o\
 #
 #	The SWIG command to build the interface code is:
 #	swig -c++ -python -py3 -naturalvar umkehr_if.i
-#	g++ -O3 -std=c++11 -fvisibility=hidden -fPIC -I./ -I /opt/python/cp37-cp37m/python3.7/include -c -o umkehr_if_wrap.o ./sources/cpp-sources/umkehr_if_wrap.cxx
+#	g++ -O3 -std=c++11 -fvisibility=hidden -fPIC -I./ -I /opt/python/cp36-cp36m/python3.6/include -c -o umkehr_if_wrap.o ./sources/cpp-sources/umkehr_if_wrap.cxx
 #----------------------------------------------------------------------------
 
 build: $(O_DEPENDS) $(CPP_DEPENDS)
@@ -51,7 +51,7 @@ build: $(O_DEPENDS) $(CPP_DEPENDS)
 	cp -f ./sources/cpp-sources/umkehr_if.py ./umkehr_if/umkehr_if.py 
 	rm -f *.o
 	@echo "Build of umkehr_if code library complete."
-	/opt/python/cp37-cp37m/bin/pip wheel ./ -w wheelhouse
+	/opt/python/cp36-cp36m/bin/pip wheel ./ -w wheelhouse
 	@echo " "
 	@echo "__        ___                   _   _             _ "
 	@echo "\ \      / / |__   ___   ___   | | | | ___   ___ | | "
@@ -73,7 +73,7 @@ build: $(O_DEPENDS) $(CPP_DEPENDS)
 	@echo "  "
 	@echo " -------------------------------------------------------------- "
 	@echo " "
-	@echo "Please install the package into python 3.7 with either:"
+	@echo "Please install the package into python 3.6 with either:"
 	@echo "1) pip install --upgrade  wheelhouse/<wheelname>"
 	@echo "2) pip3 install --upgrade wheelhouse/<wheelname>"
 	@echo "where wheel name is:-"
