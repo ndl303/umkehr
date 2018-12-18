@@ -16,6 +16,8 @@ EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
 THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+This software contains third party run-time libraries in folder *pgi_redistributables*. You are strictly prohibited by the third party from further distribution of any files in this folder.
+
 # Overview #
 This is the UMKEHR retrieval code provided to the WOUDC in January 2019. It is a shallow python wrapper around Fortran code that executes the Umkehr ozone retrieval algorithm described in *Petropavlovskikh, I., Bhartia, P. K. and DeLuisi, J.*: [New Umkehr ozone profile retrieval algorithm optimized for climatological studies](https://doi.org/10.1029/2005GL023323 ), *JGR 2005*. 
 
@@ -54,6 +56,4 @@ and writes out a Level 2 CSV file.
 # API Documentation #
 The Umkehr API is documented at the [documentation server](https://arg.usask.ca/docs/umkehr/).
 
-# Legal Notice#
-This software contains third party run-time libraries in folder *pgi_redistributables*. You are shall strictly prohibited by the third party from further distribution of any files in this folder.
 
