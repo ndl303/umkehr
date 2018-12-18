@@ -35,7 +35,8 @@ If you want to build the wheel from source for your Linux box then you can perfo
     make
 
 If the build is successful the you will see a big *whoo-hoo, the python wheel is built* scroll down your screen at the end of the last step.
-The python wheel will be in sub-directory ./wheelhouse. A file listing, ``ls -al ./wheelhouse``, should reveal the wheel and it will look something like ``umkehr-0.4.0-cp37-cp37m-linux_x86_64.whl``. This wheel can be installed into your version of Python.
+The python wheel will be in sub-directory ./wheelhouse. A file listing, ``ls -al ./wheelhouse``, should reveal the wheel and it will look something like ``umkehr-0.4.0-cp37-cp37m-linux_x86_64.whl``. This wheel can be installed into your version of Python. More details on the build and its pre-requisites
+can be found at the [documentation server](https://arg.usask.ca/docs/umkehr/)
 
 
 # Test #
@@ -47,9 +48,12 @@ You can test your ``umkehr`` installation. A test example is installed as part o
     >>> from umkehr.examples.test_umkehr import test_Level1_to_Level2
     >>> test_Level_to_Level2()
 
-The test takes about 20 seconds and processes a month of data from SYOWA in November 2009. It reads the data in from a Level 1 CSV file
+The test takes about 5 seconds and processes a month of data from SYOWA in November 2009. It reads the data in from a Level 1 CSV file
 and writes out a Level 2 CSV file. 
 
 # API Documentation #
 The Umkehr API is documented at the [documentation server](https://arg.usask.ca/docs/umkehr/).
+
+# Legal Notice#
+This software contains third party run-time libraries in folder *pgi_redistributables*. You are shall strictly prohibited by the third party from further distribution of any files in this folder.
 
