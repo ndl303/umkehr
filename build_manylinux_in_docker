@@ -13,6 +13,8 @@
 # ./build_manylinux_in_docker
 #----------------------------------------------------------------------------------------------------------
 
+autoconf configure.in > configure
+
 ./configure --enable-manylinux PYVERSION=3.6 PYBASEDIR=/opt/python/cp36-cp36m
 make clean
 make

@@ -62,9 +62,12 @@ C   1 READ (12,5200,END=600) AD1,AD2,(AD(J),J=3,5),AD6,LAM,AD7,IOMEGA,  !0000024
 C    1 (NVAL(J),J=1,14),ISTN                                            !00000250
     1 CALL UMKEHR_READ_LINE( 12, IEOF, ALINE )
       IF (IEOF .NE. 0) GOTO 600
-      READ(ALINE,5200) AD1,AD2,(AD(J),J=3,5),AD6,LAM,AD7,IOMEGA,
+      READ(ALINE,5200,ERR=887) AD1,AD2,(AD(J),J=3,5),AD6,LAM,AD7,IOMEGA,
      1 (NVAL(J),J=1,14),ISTN
-      I=I+1
+      GOTO 888
+  887 WRITE(*,*)"DECODEV4.FOR LINE68: Error decoding line from input"
+      WRITE(*,*)ALINE
+  888 I=I+1
       IF (I.LT.IBEG) GO TO 1
       IF (I.GT.IEND) GO TO 600
       IF (IOMEGA.LE.0) GO TO 1
@@ -192,9 +195,14 @@ C                                                                       !0000129
       CALL UMKEHR_WRITE_STRING( 6, OUT6)
       GO TO 5605
                                                                         !00001330
-  152 WRITE (OUT6,6300)(NRES(J),J=1,14),NERR,(NRESDL(J),ERROR(J),J=1,14)!00001340
-     1,(NNVAL(J),J=1,12)                                                !00001350
+  152 WRITE (OUT6,6300)(NRES(J),J=1,14)                                 !00001350
       CALL UMKEHR_WRITE_STRING( 6, OUT6)
+      WRITE (OUT6,6301)NERR,(NRESDL(J),ERROR(J),J=1,14)                 !00001340
+      CALL UMKEHR_WRITE_STRING( 6, OUT6)
+      WRITE (OUT6,6302)(NNVAL(J),J=1,12)                                !00001350
+      CALL UMKEHR_WRITE_STRING( 6, OUT6)
+
+
 C                                                                       !00001360
  5605 CONTINUE                                                          !00001370
       IF (KEEP.EQ.1) GO TO 154
@@ -233,7 +241,9 @@ C                                                                       !0000153
  6002 FORMAT (114(1H*))
  6100 FORMAT (A18,1XA4,A1,2X,3I2,2X,A1,I1,1X,A2,F5.1,14I5)       
  6200 FORMAT (44X,14I5)                          
- 6300 FORMAT (44X,14I5/31X,8HERRORS -,I2,5X,14(I4,A1)/45X,12I5)         !00001620
+ 6300 FORMAT (44X,14I5)                                                 !00001620
+ 6301 FORMAT (31X,8HERRORS -,I2,5X,14(I4,A1))                           !00001620
+ 6302 FORMAT (45X,12I5)                                                 !00001620
  7000 FORMAT (3I2,A1,I1,I2,I2,A2,3I4,10I5,I3)                           !TEMP****
  7100 FORMAT (I4,1X,A18,1X,F8.2,2F6.0)                                  !00001640
  9000 FORMAT (' ISTN=',I4,' NOT IN STATION INDEX. RUN TERMINATED.')     !00001650

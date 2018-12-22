@@ -22,7 +22,7 @@ pgfortran -fast -i4 -r8 -Mfixed -Mr8 -Mr8intrinsics -Mnomain -Msave -Bdynamic -c
 pgfortran -fast -i4 -r8 -Mfixed -Mr8 -Mr8intrinsics -Mnomain -Msave -Bdynamic -c sources\umkehr_interface.f -o umkehr_interface.obj
 pgfortran -fast -i4 -r8 -Mfixed -Mr8 -Mr8intrinsics -Mnomain -Msave -Bdynamic -c sources\umkv8.f            -o umkv8.obj
 pgfortran -fast -i4 -r8 -Mfixed -Mr8 -Mr8intrinsics -Mnomain -Msave -Bdynamic -c sources\decodev4.for       -o decodev4.obj
-REM pgfortran -fast -i4 -r8 -Mfixed -Mr8 -Mr8intrinsics -Mnomain -Msave -Bdynamic -Mmakedll -Xlinker /VERBOSE:Lib  -L C:\Users\nickl\Anaconda3\libs -o _umkehr_if.pyd obj\matinvn.obj obj\sasco3.obj obj\spline.obj obj\stndrd.obj obj\umkehr_interface.obj obj\umkv8.obj obj\decodev4.obj  obj\umkehr_if_wrap.obj obj\umkehr_if.obj obj\umkehr_io.obj
+REM pgfortran -fast -i4 -r8 -Mfixed -Mr8 -Mr8intrinsics -Mnomain -Msave -Bdynamic -Mmakedll -Xlinker /VERBOSE:Lib  -L C:\Users\nickl\Anaconda3\libs -o _umkehr_if.pyd matinvn.obj sasco3.obj spline.obj stndrd.obj umkehr_interface.obj umkv8.obj decodev4.obj  umkehr_if_wrap.obj umkehr_if.obj umkehr_io.obj
 
 ar -rv umkehr_codelib.lib matinvn.obj sasco3.obj spline.obj stndrd.obj umkehr_interface.obj umkv8.obj decodev4.obj 
 del *.obj

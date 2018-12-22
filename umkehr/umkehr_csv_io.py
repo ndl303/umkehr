@@ -91,19 +91,25 @@ def read_level1_umkehr_fortran_lines_from_csv( filename: str )->Tuple[ List[str]
     oldlines = []
 
     N14 =  woudc_CSV_input( filename = filename)
-    conthdr, contdata     = N14.fetch_section("CONTENT")
-    dgenhdr,dgendata      = N14.fetch_section("DATA_GENERATION")
+#    conthdr, contdata     = N14.fetch_section("CONTENT")
+#    dgenhdr,dgendata      = N14.fetch_section("DATA_GENERATION")
     plathdr, platdata     = N14.fetch_section("PLATFORM")
     insthdr, instdata     = N14.fetch_section("INSTRUMENT")
     lochdr,  locdata      = N14.fetch_section("LOCATION" )
     hdr, data             = N14.fetch_section("N14_VALUES")
 
-    tstmphdr, tstmpdata   = N14.fetch_section("TIMESTAMP")
+#    tstmphdr, tstmpdata   = N14.fetch_section("TIMESTAMP")
 
-    if  (instdata[0][ insthdr["NAME"]]).upper() == "DOBSON": IC = 3
-    else:                                                    IC = -1
+    if  (instdata[0][ insthdr["NAME"]]).upper() == "DOBSON":
+        IC = 4 if (instdata[0][ insthdr["MODEL"]]).upper() == "JAPANESE" else 3
+    else:
+        IC = -1
     ISTN = int( platdata[0][ plathdr["ID"]] )
     III  = int( instdata[0][ insthdr["NUMBER"]])
+    if (III >4999) and (III < 6000):        # Japanese models have instruments between 5000 and 5999
+        if (IC != 4):
+            print("Instrument model number ",III, " is invalid for instrument ",instdata[0][ insthdr["NAME"]],",", instdata[0][ insthdr["MODEL"]])
+        III = III - 5000
 
     if hdr.get("L") is None: hdr["L"] = hdr["W"]     # Patch up some of the bugs. Some files have W instead of L. Seems like W got renamed to L at some point.
     for rec in data:
@@ -176,7 +182,11 @@ def write_level2_umkehr_fortran_lines_to_csv( outputfilename: str , outputlines:
     insthdr, instdata     = N14.fetch_section("INSTRUMENT")
     lochdr,  locdata      = N14.fetch_section("LOCATION" )
     timhdr,  timedata     = N14.fetch_section("TIMESTAMP")
-    tim2hdr, tim2data     = N14.fetch_section("TIMESTAMP2")
+    try:
+        tim2hdr, tim2data     = N14.fetch_section("TIMESTAMP2")     # The second timestamp is not always available
+    except:
+        tim2data = None
+
     observationdate = datetime.strptime(timedata[0][1],"%Y-%m-%d")
 
     extcsv.add_data('CONTENT', 'WOUDC,UmkehrN14,2.0,1')
@@ -209,9 +219,21 @@ def write_level2_umkehr_fortran_lines_to_csv( outputfilename: str , outputlines:
         ITER     = int( outputline[ 84:86 ] )
         KB       = int( outputline[ 86:88 ] )
         KE       = int( outputline[ 88:91 ] )
-        DFRMS    = int( outputline[ 91:95 ] )/1000.0
-        FEPS     = int( outputline[ 95:99 ] )/100.0
-        RMSRES   = int( outputline[ 99:104 ] )/100.0
+        try:
+            DFRMS    = int( outputline[ 91:95 ] )/1000.0        # We sometimes get **** instead of a number
+        except:
+            DFRMS    = 9.999
+
+        try:
+            FEPS     = int( outputline[ 95:99 ] )/100.0         # We sometimes get **** instead of a number
+        except:
+            FEPS     = 99.99
+
+        try:
+            RMSRES   = int( outputline[ 99:104 ] )/100.0        # We sometimes get ***** instead of a number
+        except:
+            RMSRES   = 999.99
+
         ISN      = int( outputline[ 104: ]   )
 
         NZA         = KE
@@ -222,7 +244,8 @@ def write_level2_umkehr_fortran_lines_to_csv( outputfilename: str , outputlines:
         extcsv.add_data('C_PROFILE', line,  field= fieldheader if firsttime else None)
         firsttime=False
 
-    extcsv.add_data('TIMESTAMP', _appendfields(tim2data[0]), field='UTCOffset,Date,Time', index=2)
+    if ( tim2data is not None):
+        extcsv.add_data('TIMESTAMP', _appendfields(tim2data[0]), field='UTCOffset,Date,Time', index=2)
     woudc_umkcsv.dump(extcsv, outputfilename)
 
 

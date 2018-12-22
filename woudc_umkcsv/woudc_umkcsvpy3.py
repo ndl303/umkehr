@@ -167,7 +167,7 @@ class Reader(object):
                             '*' not in anything_more]):
                         self.errors.append(_violation_lookup(140, header))
                 except Exception as err:
-                    LOGGER.warning(err)
+                    pass                    #LOGGER.warning("Anything more exception occurred")
                 if len(values) > len(fields):
                     self.errors.append(_violation_lookup(7, header))
                     continue

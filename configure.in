@@ -1,4 +1,4 @@
-AC_INIT( umkehr,0.5.0)
+AC_INIT( umkehr,0.6.0)
 
 AC_PROG_CC
 AC_PROG_CXX

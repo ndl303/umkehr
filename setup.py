@@ -67,7 +67,7 @@ extension_module = Extension(
 
 setup(
     name                 = 'umkehr',
-    version              = "0.5.0",
+    version              = "0.6.0",
 #   version=versioneer.get_version(),
 #   cmdclass=versioneer.get_cmdclass(),
     description          = 'UMKEHR Fortran Interface Library',

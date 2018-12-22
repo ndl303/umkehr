@@ -10,17 +10,17 @@ not available for python versions prior to 3.6 as we make extensive use of the *
 Install The Python Wheel
 ------------------------
 
-Most users will choose to install the package on their 64 bit Linux systems using out pre-built ``manylinux`` version.  Wheels for Python 3.6 and 3.7
+Most users will choose to install the package on their 64 bit Linux systems using out pre-built `manylinux` version.  Wheels for Python 3.6 and 3.7
 (Linux 64 bit only) can be installed from the USASK-ARG server using::
 
-    pip install umkehr -f https:\\arg.usask.ca\wheels
+    pip install --update umkehr -f https:\\arg.usask.ca\wheels
 
 After the wheel is installed you are ready to go.  We recommend running the installation test.
 
 Tests
 -----
 
-You can test your ``umkehr`` installation. A test example is installed as part of the python package::
+You can test your `umkehr` installation. A test example is installed as part of the python package::
 
     python
     >>> from umkehr.examples.test_umkehr import test_Level1_to_Level2
@@ -139,12 +139,12 @@ and writes out a Level 2 CSV file. The screen output is shown below::
 Installing your own wheel
 -------------------------
 
-The python wheel file is a file that looks similar to ``umkehr-0.3.0-cp37-cp37m-manylinux1_x86_64.whl``. If you have this file on
+The python wheel file is a file that looks similar to `umkehr-0.3.0-cp37-cp37m-manylinux1_x86_64.whl`. If you have this file on
 your local machine (because you either built it or downloaded it) then you can install it using::
 
     pip install <wheel-name>
 
-where ``<wheel-name>`` is the name of the wheel file that you have. You can uninstall the python package using::
+where `<wheel-name>` is the name of the wheel file that you have. You can uninstall the python package using::
 
     pip uninstall umkehr
 
@@ -161,8 +161,8 @@ The **umkehr** python wheel can be built from source using standard linux compil
 - python3
 
 We recommend the `Anaconda <https://www.anaconda.com/download/>`_ distribution for python but this is not a critcal option.
-The code can be built in a virtual environment. The command ``python3`` must run the actual version of ``python`` that will be used to build
-the wheel as the build scripts run ``python3`` to find the location of python include header files and python link libraries. Note that you must use
+The code can be built in a virtual environment. The command `python3` must run the actual version of `python` that will be used to build
+the wheel as the build scripts run `python3` to find the location of python include header files and python link libraries. Note that you must use
 python 3.6 or higher.
 
 If any of these tools are not installed on your system then they can usually be installed with package managers supplied with
@@ -181,7 +181,7 @@ The process to build the wheel is a 2 step system. The following commands should
     make
 
 The build process is successful if you see a big *whoo-hoo, the python wheel is built* scroll down your screen at the end of the last step.
-The wheel will be in sub-directory ./wheelhouse. A file listing, ``ls -al ./wheelhouse``, should reveal the wheel. It will look something like ``umkehr-0.3.0-cp37-cp37m-linux_x86_64.whl``.
+The wheel will be in sub-directory ./wheelhouse. A file listing, `ls -al ./wheelhouse`, should reveal the wheel. It will look something like `umkehr-0.3.0-cp37-cp37m-linux_x86_64.whl`.
 This wheel can be installed into your version of Python, see above.
 
 Building the manylinux version
