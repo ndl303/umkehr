@@ -77,7 +77,7 @@ setup(
     packages             = find_packages(),
     package_data         = package_data,
     data_files           = data_files,
-    install_requires     = [],
+    install_requires     = ['typing'],
     ext_modules          = [extension_module],
     include_package_data = True
 )

@@ -20,8 +20,8 @@ class  woudc_CSV_input:
 
     def __init__(self, filename = None):
 
-        self.input_ecsv    : woudc_umkcsv.Reader = None           #: the extended csv reader  that reads in a file
-        self.inputfilename : str                 = None           #: The name of the file read in
+        self.input_ecsv     = None           # : woudc_umkcsv.Readerthe extended csv reader  that reads in a file
+        self.inputfilename  = None           # : str The name of the file read in
 
         if (filename is not None):
             self.load(filename)

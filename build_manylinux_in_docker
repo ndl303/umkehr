@@ -15,6 +15,14 @@
 
 autoconf configure.in > configure
 
+./configure --enable-manylinux PYVERSION=3.4 PYBASEDIR=/opt/python/cp34-cp34m
+make clean
+make
+
+./configure --enable-manylinux PYVERSION=3.5 PYBASEDIR=/opt/python/cp35-cp35m
+make clean
+make
+
 ./configure --enable-manylinux PYVERSION=3.6 PYBASEDIR=/opt/python/cp36-cp36m
 make clean
 make

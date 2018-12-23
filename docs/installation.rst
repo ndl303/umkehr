@@ -4,18 +4,19 @@ Installation
 ============
 
 The **umkehr** python package is installed as a binary Python wheel. The binary wheel can either be downloaded as a
-pre-built binary python wheel (64 bit Linux only) from the USASK-ARG website or can be built from source code. The umkehr python package is
-not available for python versions prior to 3.6 as we make extensive use of the *typing* features introduced in that version.
+pre-built binary python wheel (python 3.4, 3.5, 3.6, 3.7 on 64 bit Linux and python 3.6 and 3.7 on 64 bit Windows) from the USASK-ARG website or can
+be built from source code. The python 3.4 code is difficult to build from scratch on a modern system as it requires you to
+use old compiler versions that are compatible with your python distribution binary, we only support the pre-built binary distribution.
 
 Install The Python Wheel
 ------------------------
 
-Most users will choose to install the package on their 64 bit Linux systems using out pre-built `manylinux` version.  Wheels for Python 3.6 and 3.7
-(Linux 64 bit only) can be installed from the USASK-ARG server using::
+Most users will choose to install the package on their 64 bit systems using out pre-built wheels which can be installed
+from the USASK-ARG server using::
 
-    pip install --update umkehr -f https:\\arg.usask.ca\wheels
+    pip install --upgrade umkehr -f https://arg.usask.ca/wheels
 
-After the wheel is installed you are ready to go.  We recommend running the installation test.
+After the `umkehr` wheel is successfully installed you are ready to go.  We recommend running the installation test.
 
 Tests
 -----
